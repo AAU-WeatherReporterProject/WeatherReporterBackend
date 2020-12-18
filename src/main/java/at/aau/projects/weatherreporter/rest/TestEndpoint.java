@@ -3,6 +3,7 @@ package at.aau.projects.weatherreporter.rest;
 import at.aau.projects.weatherreporter.rest.model.TemperatureData;
 import at.aau.projects.weatherreporter.rest.model.TemperatureMeasurement;
 
+import at.aau.projects.weatherreporter.rest.service.DataIngestService;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,14 @@ import java.util.List;
 @RestController
 @RequestMapping("v1")
 public class TestEndpoint {
+
+    private DataIngestService ingestService;
+
+    public TestEndpoint(DataIngestService ingestService )
+    {
+        this.ingestService = ingestService;
+    }
+
     @PostMapping
     public void ingest(@RequestBody @Nonnull TemperatureData data) {
         System.out.println(data);
