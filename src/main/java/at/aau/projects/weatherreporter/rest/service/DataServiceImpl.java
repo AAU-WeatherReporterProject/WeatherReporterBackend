@@ -8,13 +8,12 @@ import at.aau.projects.weatherreporter.rest.model.TemperatureMeasurement;
 import at.aau.projects.weatherreporter.rest.repository.MeasurementRepository;
 import at.aau.projects.weatherreporter.rest.repository.TemperatureMeasurementPointRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,29 +28,28 @@ public class DataServiceImpl implements DataService {
     @Override
     public void ingestData(TemperatureData data) {
         List<Measurement> measurementList = new ArrayList<>();
-        Optional<TemperatureMeasurementPoint> optPoint = temperatureMeasurementPointRepository.findById(data.getMetadata().getKey());
-        if(optPoint.isPresent())
-        {
-            for(TemperatureMeasurement inputMeasurement :data.getMeasurements())
-            {
-                Measurement measurement = new Measurement();
-                measurement.setTemperatureMeasurementPoint(optPoint.get());
-                measurement.setTemperature(inputMeasurement.getTemperature());
-                measurement.setSky(inputMeasurement.getSkyState());
-                measurement.setTimestamp(Timestamp.valueOf(inputMeasurement.getTimestamp()));
-                measurementList.add(measurement);
-            }
+        TemperatureMeasurementPoint point = readTemperatureMeasurementPoint(data.getMetadata().getKey());
+
+        for (TemperatureMeasurement inputMeasurement : data.getMeasurements()) {
+            Measurement measurement = new Measurement();
+            measurement.setTemperatureMeasurementPoint(point);
+            measurement.setTemperature(inputMeasurement.getTemperature());
+            measurement.setSky(inputMeasurement.getSkyState());
+            measurement.setTimestamp(Timestamp.valueOf(inputMeasurement.getTimestamp()));
+            measurementList.add(measurement);
         }
         measurementRepository.saveAll(measurementList);
-
     }
     @Override
     public List<TemperatureMeasurement> readDataPoints(String from, String to, String measurementKey) {
         List<TemperatureMeasurement> temperatureMeasurements = new ArrayList<>();
-        List<Measurement> measurements = measurementRepository.findAll();
-        for(Measurement measurement: measurements)
-        {
-            temperatureMeasurements.add(new TemperatureMeasurement(measurement.getTemperature(),measurement.getSky(),null ));
+        Timestamp timestampFrom = Timestamp.valueOf(from);
+        Timestamp timestampTo = Timestamp.valueOf(to);
+        List<Measurement> measurements = measurementRepository.findAllByTemperatureMeasurementPoint_MeasurementKeyAndTimestampBetween(measurementKey, timestampFrom, timestampTo);
+        measurements.sort(Comparator.comparing(Measurement::getTimestamp).reversed());
+
+        for (Measurement measurement : measurements) {
+            temperatureMeasurements.add(new TemperatureMeasurement(measurement.getTemperature(), measurement.getSky(), measurement.getTimestamp().toString()));
         }
 
         return temperatureMeasurements;
@@ -79,5 +77,14 @@ public class DataServiceImpl implements DataService {
     private String generateMeasurementKey()
     {
       return  UUID.randomUUID().toString();
+    }
+
+    private TemperatureMeasurementPoint readTemperatureMeasurementPoint(String measurementKey)
+    {
+        Optional<TemperatureMeasurementPoint> optPoint = temperatureMeasurementPointRepository.findById(measurementKey);
+        if(!optPoint.isPresent())
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+
+        return optPoint.get();
     }
 }

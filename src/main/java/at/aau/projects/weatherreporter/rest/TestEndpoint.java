@@ -7,6 +7,7 @@ import at.aau.projects.weatherreporter.rest.model.TemperatureMeasurement;
 import at.aau.projects.weatherreporter.rest.service.DataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,14 +35,13 @@ public class TestEndpoint {
     }
 
     @GetMapping(value = "/measurementPoints")
-    public List<MeasurementPoint> getMeasurementPoints(
-            @Param("from") String from, @Param("to") String to, @Param("key") String measurementKey) {
+    public List<MeasurementPoint> getMeasurementPoints() {
         return  dataService.getAllMeasurementPoints();
     }
 
     @GetMapping(value = "/dataPoints")
     public List<TemperatureMeasurement> getDataPoints(
-            @Param("from") String from, @Param("to") String to, @Param("key") String measurementKey) {
-       return  dataService.readDataPoints(from,to,measurementKey);
+            @Param("from") String from, @Param("to") String to, @Param("key") String key) {
+       return  dataService.readDataPoints(from,to,key);
     }
 }
