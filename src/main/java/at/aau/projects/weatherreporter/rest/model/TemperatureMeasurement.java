@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 @ToString
 public class TemperatureMeasurement {
     @Nullable
-    private final Double degreeCelcius;
+    private final Double temperature;
 
     @Nullable
     private final SkyState sky;
@@ -25,7 +25,7 @@ public class TemperatureMeasurement {
             @Nullable Double degreeCelsius,
             @Nullable SkyState sky,
             String timestamp) {
-        this.degreeCelcius = degreeCelsius;
+        this.temperature = degreeCelsius;
         this.sky = sky;
         this.timestamp = timestamp;
     }

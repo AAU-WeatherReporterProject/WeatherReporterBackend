@@ -25,7 +25,7 @@ public class TestEndpoint {
 
     @PostMapping(value = "/ingest")
     public void ingest(@RequestBody @Nonnull TemperatureData data) {
-        System.out.println(data);
+        dataService.ingestData(data);
     }
 
     @PostMapping(value = "/measurementPoint")
