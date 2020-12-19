@@ -28,30 +28,43 @@ public class DataServiceImpl implements DataService {
     @Override
     public void ingestData(TemperatureData data) {
         List<Measurement> measurementList = new ArrayList<>();
-        TemperatureMeasurementPoint point = readTemperatureMeasurementPoint(data.getMetadata().getKey());
+        if(data !=null && data.getMetadata()!=null && data.getMeasurements()!=null) {
+            TemperatureMeasurementPoint point = readTemperatureMeasurementPoint(data.getMetadata().getKey());
 
-        for (TemperatureMeasurement inputMeasurement : data.getMeasurements()) {
-            Measurement measurement = new Measurement();
-            measurement.setTemperatureMeasurementPoint(point);
-            measurement.setTemperature(inputMeasurement.getTemperature());
-            measurement.setSky(inputMeasurement.getSkyState());
-            measurement.setTimestamp(Timestamp.valueOf(inputMeasurement.getTimestamp()));
-            measurementList.add(measurement);
+            for (TemperatureMeasurement inputMeasurement : data.getMeasurements()) {
+                Measurement measurement = new Measurement();
+                measurement.setTemperatureMeasurementPoint(point);
+                measurement.setTemperature(inputMeasurement.getTemperature());
+                measurement.setSky(inputMeasurement.getSkyState());
+                measurement.setTimestamp(Timestamp.valueOf(inputMeasurement.getTimestamp()));
+                measurementList.add(measurement);
+            }
+            measurementRepository.saveAll(measurementList);
         }
-        measurementRepository.saveAll(measurementList);
     }
     @Override
     public List<TemperatureMeasurement> readDataPoints(String from, String to, String measurementKey) {
         List<TemperatureMeasurement> temperatureMeasurements = new ArrayList<>();
-        Timestamp timestampFrom = Timestamp.valueOf(from);
-        Timestamp timestampTo = Timestamp.valueOf(to);
-        List<Measurement> measurements = measurementRepository.findAllByTemperatureMeasurementPoint_MeasurementKeyAndTimestampBetween(measurementKey, timestampFrom, timestampTo);
-        measurements.sort(Comparator.comparing(Measurement::getTimestamp).reversed());
+        List<Measurement> measurements = new ArrayList<>();
+        if(measurementKey!=null) {
 
-        for (Measurement measurement : measurements) {
-            temperatureMeasurements.add(new TemperatureMeasurement(measurement.getTemperature(), measurement.getSky(), measurement.getTimestamp().toString()));
+            Timestamp timestampFrom = from!=null?Timestamp.valueOf(from):null;
+            Timestamp timestampTo = to!=null?Timestamp.valueOf(to):null;
+            if (timestampFrom != null && timestampTo != null)
+                measurements = measurementRepository.findAllByTemperatureMeasurementPoint_MeasurementKeyAndTimestampBetween(measurementKey, timestampFrom, timestampTo);
+            else if (timestampFrom != null)
+                measurements = measurementRepository.findAllByTemperatureMeasurementPoint_MeasurementKeyAndTimestampAfter(measurementKey, timestampFrom);
+            else if (timestampTo != null)
+                measurements = measurementRepository.findAllByTemperatureMeasurementPoint_MeasurementKeyAndTimestampBefore(measurementKey, timestampTo);
+            else
+                measurements = measurementRepository.findAllByTemperatureMeasurementPoint_MeasurementKey(measurementKey);
+            
+            measurements.sort(Comparator.comparing(Measurement::getTimestamp).reversed());
+
+            for (Measurement measurement : measurements) {
+                temperatureMeasurements.add(new TemperatureMeasurement(measurement.getTemperature(), measurement.getSky(), measurement.getTimestamp().toString()));
+            }
         }
-
         return temperatureMeasurements;
     }
 
