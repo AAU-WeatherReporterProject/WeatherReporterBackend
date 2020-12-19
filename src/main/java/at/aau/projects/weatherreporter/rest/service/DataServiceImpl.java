@@ -9,12 +9,14 @@ import at.aau.projects.weatherreporter.rest.repository.MeasurementRepository;
 import at.aau.projects.weatherreporter.rest.repository.TemperatureMeasurementPointRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class DataServiceImpl implements DataService {
@@ -42,6 +44,7 @@ public class DataServiceImpl implements DataService {
             }
         }
         measurementRepository.saveAll(measurementList);
+
     }
     @Override
     public List<TemperatureMeasurement> readDataPoints(String from, String to, String measurementKey) {
@@ -66,11 +69,16 @@ public class DataServiceImpl implements DataService {
         return point.getMeasurementKey();
     }
 
+    @Override
+    public List<MeasurementPoint> getAllMeasurementPoints() {
+       List<TemperatureMeasurementPoint> temperatureMeasurementPoints = temperatureMeasurementPointRepository.findAll();
+       return temperatureMeasurementPoints.stream()
+               .map(temp -> new MeasurementPoint(temp.getName(),temp.getLocation(),temp.getMeasurementKey()))
+               .collect(Collectors.toList());
+    }
+
     private String generateMeasurementKey()
     {
       return  UUID.randomUUID().toString();
     }
-
-
-
 }

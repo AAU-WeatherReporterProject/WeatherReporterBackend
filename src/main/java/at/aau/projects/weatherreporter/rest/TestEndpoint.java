@@ -33,6 +33,12 @@ public class TestEndpoint {
         return dataService.addMeasurementPoint(measurementPoint);
     }
 
+    @GetMapping(value = "/measurementPoints")
+    public List<MeasurementPoint> getMeasurementPoints(
+            @Param("from") String from, @Param("to") String to, @Param("key") String measurementKey) {
+        return  dataService.getAllMeasurementPoints();
+    }
+
     @GetMapping(value = "/dataPoints")
     public List<TemperatureMeasurement> getDataPoints(
             @Param("from") String from, @Param("to") String to, @Param("key") String measurementKey) {

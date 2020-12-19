@@ -16,4 +16,6 @@ public interface DataService {
 
     String addMeasurementPoint(MeasurementPoint measurementPoint) ;
 
+    List<MeasurementPoint> getAllMeasurementPoints();
+
 }
