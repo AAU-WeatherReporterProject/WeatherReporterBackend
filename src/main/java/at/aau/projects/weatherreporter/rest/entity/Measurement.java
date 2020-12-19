@@ -1,23 +1,27 @@
 package at.aau.projects.weatherreporter.rest.entity;
 
+import at.aau.projects.weatherreporter.rest.model.SkyState;
 import lombok.Getter;
-import lombok.ToString;
+import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.sql.Timestamp;
 
 @Getter
-@ToString
+@Setter
 @Entity
 @Table(name = "Measurement")
 public class Measurement {
 
     @Id
-    private String measurement_key;
-    @OneToMany(
-            mappedBy = "measurement",
-            cascade = CascadeType.DETACH,
-            fetch = FetchType.LAZY
-    )
-    private Set<TemperatureMeasurementPoint> temperatureMeasurementPoints;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "measurementKey", referencedColumnName = "measurementKey")
+    private TemperatureMeasurementPoint temperatureMeasurementPoint;
+    private Timestamp timestamp;
+    private Double temperature;
+    private SkyState sky;
+
+
 }
