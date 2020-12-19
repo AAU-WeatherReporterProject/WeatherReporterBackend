@@ -1,9 +1,11 @@
 package at.aau.projects.weatherreporter.rest;
 
+import at.aau.projects.weatherreporter.rest.model.MeasurementPoint;
 import at.aau.projects.weatherreporter.rest.model.TemperatureData;
 import at.aau.projects.weatherreporter.rest.model.TemperatureMeasurement;
 
-import at.aau.projects.weatherreporter.rest.service.DataIngestService;
+import at.aau.projects.weatherreporter.rest.service.DataService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,26 +20,22 @@ import java.util.List;
 @RequestMapping("v1")
 public class TestEndpoint {
 
-    private DataIngestService ingestService;
+    @Autowired
+    private DataService dataService;
 
-    public TestEndpoint(DataIngestService ingestService )
-    {
-        this.ingestService = ingestService;
-    }
-
-    @PostMapping
+    @PostMapping(value = "/ingest")
     public void ingest(@RequestBody @Nonnull TemperatureData data) {
         System.out.println(data);
     }
 
-    @GetMapping
+    @PostMapping(value = "/measurementPoint")
+    public String addMeasurementPoint(@RequestBody @Nonnull MeasurementPoint measurementPoint) {
+        return dataService.addMeasurementPoint(measurementPoint);
+    }
+
+    @GetMapping(value = "/dataPoints")
     public List<TemperatureMeasurement> getDataPoints(
-            @Param("from") String from, @Param("to") String to, @Param("key") String locationKey) {
-        return List.of(
-                new TemperatureMeasurement(1d, null),
-                new TemperatureMeasurement(1d, null),
-                new TemperatureMeasurement(1d, null),
-                new TemperatureMeasurement(1d, null)
-        );
+            @Param("from") String from, @Param("to") String to, @Param("key") String measurementKey) {
+       return  dataService.readDataPoints(from,to,measurementKey);
     }
 }

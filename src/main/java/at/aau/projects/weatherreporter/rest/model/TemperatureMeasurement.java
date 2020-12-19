@@ -15,14 +15,18 @@ public class TemperatureMeasurement {
     @Nullable
     private final SkyState sky;
 
+    private final String timestamp;
+
     public TemperatureMeasurement() {
-        this(null, null);
+        this(null, null,null);
     }
 
     public TemperatureMeasurement(
             @Nullable Double degreeCelsius,
-            @Nullable SkyState sky) {
+            @Nullable SkyState sky,
+            String timestamp) {
         this.degreeCelcius = degreeCelsius;
         this.sky = sky;
+        this.timestamp = timestamp;
     }
 }
