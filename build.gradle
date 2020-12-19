@@ -3,6 +3,9 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
     id 'java'
     id 'checkstyle'
+
+    id "com.palantir.docker" version "0.22.1"
+    id "com.palantir.docker-run" version "0.22.1"
 }
 
 group = 'at.aau.projects'
@@ -43,4 +46,18 @@ test {
 
 checkstyle {
     toolVersion = "8.38"
+}
+
+docker {
+    dependsOn build
+
+    name "${project.name}:${project.version}"
+    files bootJar.archivePath
+    buildArgs(['JAR_FILE': "${bootJar.archiveName}"])
+}
+
+dockerRun {
+    name "${project.name}"
+    image "${project.name}:${project.version}"
+    ports '8098:8098'
 }
