@@ -13,7 +13,7 @@ public class TemperatureMeasurement {
     private final Double temperature;
 
     @Nullable
-    private final SkyState sky;
+    private final SkyState skyState;
 
     private final String timestamp;
 
@@ -23,10 +23,10 @@ public class TemperatureMeasurement {
 
     public TemperatureMeasurement(
             @Nullable Double degreeCelsius,
-            @Nullable SkyState sky,
+            @Nullable SkyState skyState,
             String timestamp) {
         this.temperature = degreeCelsius;
-        this.sky = sky;
+        this.skyState = skyState;
         this.timestamp = timestamp;
     }
 }

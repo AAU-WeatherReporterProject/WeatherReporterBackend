@@ -9,7 +9,6 @@ import at.aau.projects.weatherreporter.rest.repository.MeasurementRepository;
 import at.aau.projects.weatherreporter.rest.repository.TemperatureMeasurementPointRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public class DataServiceImpl implements DataService {
                 Measurement measurement = new Measurement();
                 measurement.setTemperatureMeasurementPoint(optPoint.get());
                 measurement.setTemperature(inputMeasurement.getTemperature());
-                measurement.setSky(inputMeasurement.getSky());
+                measurement.setSky(inputMeasurement.getSkyState());
                 measurement.setTimestamp(Timestamp.valueOf(inputMeasurement.getTimestamp()));
                 measurementList.add(measurement);
             }

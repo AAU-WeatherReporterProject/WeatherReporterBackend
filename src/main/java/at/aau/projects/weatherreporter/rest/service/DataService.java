@@ -1,7 +1,5 @@
 package at.aau.projects.weatherreporter.rest.service;
 
-import at.aau.projects.weatherreporter.rest.entity.Measurement;
-import at.aau.projects.weatherreporter.rest.entity.TemperatureMeasurementPoint;
 import at.aau.projects.weatherreporter.rest.model.MeasurementPoint;
 import at.aau.projects.weatherreporter.rest.model.TemperatureData;
 import at.aau.projects.weatherreporter.rest.model.TemperatureMeasurement;
