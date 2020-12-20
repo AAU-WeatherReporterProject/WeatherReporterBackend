@@ -36,7 +36,7 @@ public class DataServiceImpl implements DataService {
                 measurement.setTemperatureMeasurementPoint(point);
                 measurement.setTemperature(inputMeasurement.getTemperature());
                 measurement.setSky(inputMeasurement.getSkyState());
-                measurement.setTimestamp(Timestamp.valueOf(inputMeasurement.getTimestamp()));
+                measurement.setTimestamp(new Timestamp(System.currentTimeMillis()));
                 measurementList.add(measurement);
             }
             measurementRepository.saveAll(measurementList);
@@ -45,7 +45,7 @@ public class DataServiceImpl implements DataService {
     @Override
     public List<TemperatureMeasurement> readDataPoints(String from, String to, String measurementKey) {
         List<TemperatureMeasurement> temperatureMeasurements = new ArrayList<>();
-        List<Measurement> measurements = new ArrayList<>();
+        List<Measurement> measurements;
         if(measurementKey!=null) {
 
             Timestamp timestampFrom = from!=null?Timestamp.valueOf(from):null;
@@ -58,9 +58,8 @@ public class DataServiceImpl implements DataService {
                 measurements = measurementRepository.findAllByTemperatureMeasurementPoint_MeasurementKeyAndTimestampBefore(measurementKey, timestampTo);
             else
                 measurements = measurementRepository.findAllByTemperatureMeasurementPoint_MeasurementKey(measurementKey);
-            
-            measurements.sort(Comparator.comparing(Measurement::getTimestamp).reversed());
 
+            measurements.sort(Comparator.comparing(Measurement::getTimestamp).reversed());
             for (Measurement measurement : measurements) {
                 temperatureMeasurements.add(new TemperatureMeasurement(measurement.getTemperature(), measurement.getSky(), measurement.getTimestamp().toString()));
             }

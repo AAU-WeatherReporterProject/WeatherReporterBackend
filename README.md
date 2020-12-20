@@ -18,8 +18,7 @@ Example for Json Body of post request
         "key": "123456789"
     },
     "measurements": [
-        {
-            "timestamp": "2020-12-09 23:59:00",
+        {         
             "temperature": "12.11",
             "skyState": "2"
         }
