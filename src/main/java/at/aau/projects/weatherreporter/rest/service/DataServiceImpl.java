@@ -32,7 +32,6 @@ public class DataServiceImpl implements DataService {
         List<Measurement> measurementList = new ArrayList<>();
         if(data !=null && data.getMetadata()!=null && data.getMeasurements()!=null && !data.getMeasurements().isEmpty()) {
             TemperatureMeasurementPoint point = readTemperatureMeasurementPoint(data.getMetadata().getKey());
-
             for (TemperatureMeasurement inputMeasurement : data.getMeasurements()) {
                 Measurement measurement = new Measurement();
                 measurement.setTemperatureMeasurementPoint(point);
