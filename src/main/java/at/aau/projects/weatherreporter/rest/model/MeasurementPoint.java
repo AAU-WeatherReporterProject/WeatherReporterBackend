@@ -1,5 +1,6 @@
 package at.aau.projects.weatherreporter.rest.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -7,6 +8,7 @@ import javax.annotation.Nullable;
 
 @Getter
 @ToString
+@EqualsAndHashCode
 public class MeasurementPoint {
 
     private final String name;

@@ -7,7 +7,6 @@ import at.aau.projects.weatherreporter.rest.model.TemperatureData;
 import at.aau.projects.weatherreporter.rest.model.TemperatureMeasurement;
 import at.aau.projects.weatherreporter.rest.repository.MeasurementRepository;
 import at.aau.projects.weatherreporter.rest.repository.TemperatureMeasurementPointRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -19,16 +18,19 @@ import java.util.stream.Collectors;
 @Service
 public class DataServiceImpl implements DataService {
 
-    @Autowired
-    private MeasurementRepository measurementRepository;
+    private final MeasurementRepository measurementRepository;
+    private final TemperatureMeasurementPointRepository temperatureMeasurementPointRepository;
 
-    @Autowired
-    private TemperatureMeasurementPointRepository temperatureMeasurementPointRepository;
+    public DataServiceImpl(MeasurementRepository measurementRepository, TemperatureMeasurementPointRepository temperatureMeasurementPointRepository)
+    {
+        this.measurementRepository = measurementRepository;
+        this.temperatureMeasurementPointRepository = temperatureMeasurementPointRepository;
+    }
 
     @Override
     public void ingestData(TemperatureData data) {
         List<Measurement> measurementList = new ArrayList<>();
-        if(data !=null && data.getMetadata()!=null && data.getMeasurements()!=null) {
+        if(data !=null && data.getMetadata()!=null && data.getMeasurements()!=null && !data.getMeasurements().isEmpty()) {
             TemperatureMeasurementPoint point = readTemperatureMeasurementPoint(data.getMetadata().getKey());
 
             for (TemperatureMeasurement inputMeasurement : data.getMeasurements()) {
@@ -70,11 +72,12 @@ public class DataServiceImpl implements DataService {
     @Override
     public String addMeasurementPoint(MeasurementPoint measurementPoint) {
         TemperatureMeasurementPoint point = new TemperatureMeasurementPoint();
-        point.setLocation(measurementPoint.getLocation());
-        point.setName(measurementPoint.getName());
-        point.setMeasurementKey(generateMeasurementKey());
-
-        point = temperatureMeasurementPointRepository.save(point);
+        if (measurementPoint != null) {
+            point.setLocation(measurementPoint.getLocation());
+            point.setName(measurementPoint.getName());
+            point.setMeasurementKey(generateMeasurementKey());
+            point = temperatureMeasurementPointRepository.save(point);
+        }
         return point.getMeasurementKey();
     }
 
@@ -86,17 +89,14 @@ public class DataServiceImpl implements DataService {
                .collect(Collectors.toList());
     }
 
-    private String generateMeasurementKey()
-    {
-      return  UUID.randomUUID().toString();
+    private String generateMeasurementKey() {
+        return UUID.randomUUID().toString();
     }
 
-    private TemperatureMeasurementPoint readTemperatureMeasurementPoint(String measurementKey)
-    {
+    private TemperatureMeasurementPoint readTemperatureMeasurementPoint(String measurementKey) {
         Optional<TemperatureMeasurementPoint> optPoint = temperatureMeasurementPointRepository.findById(measurementKey);
-        if(!optPoint.isPresent())
+        if (!optPoint.isPresent())
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
-
         return optPoint.get();
     }
 }

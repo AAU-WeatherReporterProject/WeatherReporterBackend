@@ -22,4 +22,14 @@ public class TemperatureMeasurementPoint {
     private Set<Measurement> measurements;
     private String name;
     private String location;
+
+    public TemperatureMeasurementPoint(){
+    }
+
+    public TemperatureMeasurementPoint(String measurementKey, String name, String location)
+    {
+        this.measurementKey = measurementKey;
+        this.name = name;
+        this.location = location;
+    }
 }
