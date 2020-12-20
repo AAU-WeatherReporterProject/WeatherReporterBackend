@@ -53,7 +53,7 @@ checkstyle {
 docker {
     dependsOn build
 
-    name "${project.name}:${project.version}"
+    name "docker.pkg.github.com/aau-weatherreporterproject/weatherreporterbackend/${project.name}:${project.version}"
     files bootJar.archivePath
     buildArgs(['JAR_FILE': "${bootJar.archiveName}"])
 }
