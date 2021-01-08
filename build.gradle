@@ -48,6 +48,7 @@ test {
 
 checkstyle {
     toolVersion = "8.38"
+    checkstyleTest.enabled = false
 }
 
 docker {

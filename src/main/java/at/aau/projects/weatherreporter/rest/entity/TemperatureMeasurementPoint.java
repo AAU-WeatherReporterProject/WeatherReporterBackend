@@ -3,7 +3,12 @@ package at.aau.projects.weatherreporter.rest.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.Set;
 
 @Getter
@@ -26,8 +31,7 @@ public class TemperatureMeasurementPoint {
     public TemperatureMeasurementPoint(){
     }
 
-    public TemperatureMeasurementPoint(String measurementKey, String name, String location)
-    {
+    public TemperatureMeasurementPoint(String measurementKey, String name, String location) {
         this.measurementKey = measurementKey;
         this.name = name;
         this.location = location;
