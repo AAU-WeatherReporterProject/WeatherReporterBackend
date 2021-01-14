@@ -18,7 +18,7 @@ public class TemperatureMeasurement {
     private final String timestamp;
 
     public TemperatureMeasurement() {
-        this(null, null,null);
+        this(null, null, null);
     }
 
     public TemperatureMeasurement(

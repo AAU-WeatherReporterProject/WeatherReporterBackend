@@ -17,11 +17,11 @@ public class MeasurementPoint {
     private final String measurementKey;
 
     public MeasurementPoint() {
-        this(null, null,null);
+        this(null, null, null);
     }
 
     public MeasurementPoint(String name, String location, String measurementKey) {
-        this.name= name;
+        this.name = name;
         this.location = location;
         this.measurementKey = measurementKey;
     }

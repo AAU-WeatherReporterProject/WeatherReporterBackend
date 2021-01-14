@@ -7,13 +7,11 @@ import at.aau.projects.weatherreporter.rest.model.TemperatureMeasurement;
 import java.util.List;
 
 public interface DataService {
-
     void ingestData(TemperatureData data);
 
     List<TemperatureMeasurement> readDataPoints(String from, String to, String measurementKey);
 
-    String addMeasurementPoint(MeasurementPoint measurementPoint) ;
+    String addMeasurementPoint(MeasurementPoint measurementPoint);
 
     List<MeasurementPoint> getAllMeasurementPoints();
-
 }
