@@ -1,9 +1,9 @@
 # WeatherReporterBackend
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=AAU-WeatherReporterProject_WeatherReporterBackend&metric=bugs)](https://sonarcloud.io/dashboard?id=Kirdock_Moodle2.0)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=AAU-WeatherReporterProject_WeatherReporterBackend&metric=code_smells)](https://sonarcloud.io/dashboard?id=Kirdock_Moodle2.0)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=AAU-WeatherReporterProject_WeatherReporterBackend&metric=alert_status)](https://sonarcloud.io/dashboard?id=Kirdock_Moodle2.0)
-[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=AAU-WeatherReporterProject_WeatherReporterBackend&metric=sqale_index)](https://sonarcloud.io/dashboard?id=Kirdock_Moodle2.0)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=AAU-WeatherReporterProject_WeatherReporterBackend&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=Kirdock_Moodle2.0)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=AAU-WeatherReporterProject_WeatherReporterBackend&metric=bugs)](https://sonarcloud.io/dashboard?id=AAU-WeatherReporterProject_WeatherReporterBackend)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=AAU-WeatherReporterProject_WeatherReporterBackend&metric=code_smells)](https://sonarcloud.io/dashboard?id=AAU-WeatherReporterProject_WeatherReporterBackend)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=AAU-WeatherReporterProject_WeatherReporterBackend&metric=alert_status)](https://sonarcloud.io/dashboard?id=AAU-WeatherReporterProject_WeatherReporterBackend)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=AAU-WeatherReporterProject_WeatherReporterBackend&metric=sqale_index)](https://sonarcloud.io/dashboard?id=AAU-WeatherReporterProject_WeatherReporterBackend)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=AAU-WeatherReporterProject_WeatherReporterBackend&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=AAU-WeatherReporterProject_WeatherReporterBackend)
 
 
 ##APIs
