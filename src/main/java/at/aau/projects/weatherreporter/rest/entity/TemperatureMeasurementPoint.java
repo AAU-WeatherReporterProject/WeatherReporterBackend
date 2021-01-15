@@ -3,12 +3,7 @@ package at.aau.projects.weatherreporter.rest.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Set;
 
 @Getter
@@ -18,22 +13,17 @@ import java.util.Set;
 public class TemperatureMeasurementPoint {
 
     @Id
-    private String measurementKey;
+    private String location;
     @OneToMany(
             mappedBy = "temperatureMeasurementPoint",
             cascade = CascadeType.DETACH,
             fetch = FetchType.LAZY
     )
     private Set<Measurement> measurements;
-    private String name;
-    private String location;
-
     public TemperatureMeasurementPoint(){
     }
 
-    public TemperatureMeasurementPoint(String measurementKey, String name, String location) {
-        this.measurementKey = measurementKey;
-        this.name = name;
+    public TemperatureMeasurementPoint(String location) {
         this.location = location;
     }
 }

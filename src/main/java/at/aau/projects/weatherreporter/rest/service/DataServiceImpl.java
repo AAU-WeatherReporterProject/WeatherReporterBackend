@@ -48,21 +48,21 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public List<TemperatureMeasurement> readDataPoints(String from, String to, String measurementKey) {
+    public List<TemperatureMeasurement> readDataPoints(String from, String to, String location) {
         List<TemperatureMeasurement> temperatureMeasurements = new ArrayList<>();
         List<Measurement> measurements;
-        if (measurementKey != null) {
+        if (location != null) {
 
             Timestamp timestampFrom = from != null ? Timestamp.valueOf(from) : null;
             Timestamp timestampTo = to != null ? Timestamp.valueOf(to) : null;
             if (timestampFrom != null && timestampTo != null) {
-                measurements = measurementRepository.findAllByTemperatureMeasurementPoint_MeasurementKeyAndTimestampBetween(measurementKey, timestampFrom, timestampTo);
+                measurements = measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampBetween(location, timestampFrom, timestampTo);
             } else if (timestampFrom != null) {
-                measurements = measurementRepository.findAllByTemperatureMeasurementPoint_MeasurementKeyAndTimestampAfter(measurementKey, timestampFrom);
+                measurements = measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampAfter(location, timestampFrom);
             } else if (timestampTo != null) {
-                measurements = measurementRepository.findAllByTemperatureMeasurementPoint_MeasurementKeyAndTimestampBefore(measurementKey, timestampTo);
+                measurements = measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampBefore(location, timestampTo);
             } else {
-                measurements = measurementRepository.findAllByTemperatureMeasurementPoint_MeasurementKey(measurementKey);
+                measurements = measurementRepository.findAllByTemperatureMeasurementPoint_Location(location);
             }
 
             measurements.sort(Comparator.comparing(Measurement::getTimestamp).reversed());
@@ -74,28 +74,28 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public String addMeasurementPoint(MeasurementPoint measurementPoint) {
+    public void addMeasurementPoint(MeasurementPoint measurementPoint) {
+        Optional<TemperatureMeasurementPoint> optPoint = temperatureMeasurementPointRepository.findById(measurementPoint.getLocation());
+        if(optPoint.isPresent())
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,"Measurement Point already exists");
+
         TemperatureMeasurementPoint point = new TemperatureMeasurementPoint();
-        if (measurementPoint != null) {
-            point.setLocation(measurementPoint.getLocation());
-            point.setName(measurementPoint.getName());
-            point.setMeasurementKey(generateMeasurementKey());
-            point = temperatureMeasurementPointRepository.save(point);
-        }
-        return point.getMeasurementKey();
+        point.setLocation(measurementPoint.getLocation());
+        temperatureMeasurementPointRepository.save(point);
     }
 
     @Override
     public List<MeasurementPoint> getAllMeasurementPoints() {
         List<TemperatureMeasurementPoint> temperatureMeasurementPoints = temperatureMeasurementPointRepository.findAll();
         return temperatureMeasurementPoints.stream()
-                .map(temp -> new MeasurementPoint(temp.getName(), temp.getLocation(), temp.getMeasurementKey()))
+                .map(temp -> new MeasurementPoint(temp.getLocation()))
                 .collect(Collectors.toList());
     }
 
-    private String generateMeasurementKey() {
+    //TODO if never needed again delete
+    /*private String generateMeasurementKey() {
         return UUID.randomUUID().toString();
-    }
+    }*/
 
     private TemperatureMeasurementPoint readTemperatureMeasurementPoint(String measurementKey) {
         Optional<TemperatureMeasurementPoint> optPoint = temperatureMeasurementPointRepository.findById(measurementKey);

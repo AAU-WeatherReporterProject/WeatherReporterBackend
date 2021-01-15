@@ -11,7 +11,6 @@ import javax.annotation.Nullable;
 public class TemperatureMeasurement {
     @Nullable
     private final Double temperature;
-
     @Nullable
     private final SkyState skyState;
 

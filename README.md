@@ -15,7 +15,7 @@ Example for Json Body of post request
 ````
 {
     "metadata": {
-        "key": "123456789"
+        "key": "TestLocation"
     },
     "measurements": [
         {         
@@ -31,7 +31,6 @@ Example for Json Body of post request
 post "/api/v1/measurementPoint" 
 ````
 {
-	"name":"irgendwo",
 	"location":"wos geht die dos on"
 }
 ````
@@ -46,9 +45,7 @@ Result
 ````
 [
     {
-        "name": "TestLocation",
         "location": "irgendwo",
-        "measurementKey": "123456789"
     }
 ]
 ````
@@ -60,7 +57,7 @@ Here the 3 parameters from, to, and key can be given
 
 Example:
 ````
-http://localhost:8098/api/v1/dataPoints?from=2020-08-08 23:59:00&to=2020-09-10 23:59:00&key=123456789
+http://localhost:8098/api/v1/dataPoints?from=2020-08-08 23:59:00&to=2020-09-10 23:59:00&key=TestLocation
 ````
 ###Access H2 Console 
 - http://localhost:8098/api/h2-console

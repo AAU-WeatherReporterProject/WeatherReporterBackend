@@ -24,11 +24,9 @@ public class Measurement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "measurementKey", referencedColumnName = "measurementKey")
+    @JoinColumn(name = "location", referencedColumnName = "location")
     private TemperatureMeasurementPoint temperatureMeasurementPoint;
     private Timestamp timestamp;
     private Double temperature;
     private SkyState sky;
-
-
 }

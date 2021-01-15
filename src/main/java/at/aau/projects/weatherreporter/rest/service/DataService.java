@@ -11,7 +11,7 @@ public interface DataService {
 
     List<TemperatureMeasurement> readDataPoints(String from, String to, String measurementKey);
 
-    String addMeasurementPoint(MeasurementPoint measurementPoint);
+    void addMeasurementPoint(MeasurementPoint measurementPoint);
 
     List<MeasurementPoint> getAllMeasurementPoints();
 }

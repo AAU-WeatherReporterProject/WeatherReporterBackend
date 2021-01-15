@@ -11,18 +11,13 @@ import javax.annotation.Nullable;
 @EqualsAndHashCode
 public class MeasurementPoint {
 
-    private final String name;
     private final String location;
-    @Nullable
-    private final String measurementKey;
 
     public MeasurementPoint() {
-        this(null, null, null);
+        this(null);
     }
 
-    public MeasurementPoint(String name, String location, String measurementKey) {
-        this.name = name;
+    public MeasurementPoint(String location) {
         this.location = location;
-        this.measurementKey = measurementKey;
     }
 }
