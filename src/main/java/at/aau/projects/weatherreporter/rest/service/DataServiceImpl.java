@@ -35,6 +35,9 @@ public class DataServiceImpl implements DataService {
         List<Measurement> measurementList = new ArrayList<>();
         if (data != null && data.getMetadata() != null && data.getMeasurements() != null && !data.getMeasurements().isEmpty()) {
             TemperatureMeasurementPoint point = readTemperatureMeasurementPoint(data.getMetadata().getKey());
+            if(point == null)
+                addMeasurementPoint(new MeasurementPoint(data.getMetadata().getKey()));
+
             for (TemperatureMeasurement inputMeasurement : data.getMeasurements()) {
                 Measurement measurement = new Measurement();
                 measurement.setTemperatureMeasurementPoint(point);
@@ -75,13 +78,13 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public void addMeasurementPoint(MeasurementPoint measurementPoint) {
-        Optional<TemperatureMeasurementPoint> optPoint = temperatureMeasurementPointRepository.findById(measurementPoint.getLocation());
-        if(optPoint.isPresent())
+        TemperatureMeasurementPoint measurementPoint1 = readTemperatureMeasurementPoint(measurementPoint.getLocation());
+        if(measurementPoint1!=null)
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,"Measurement Point already exists");
 
         TemperatureMeasurementPoint point = new TemperatureMeasurementPoint();
         point.setLocation(measurementPoint.getLocation());
-        temperatureMeasurementPointRepository.save(point);
+        temperatureMeasurementPointRepository.saveAndFlush(point);
     }
 
     @Override
@@ -97,10 +100,10 @@ public class DataServiceImpl implements DataService {
         return UUID.randomUUID().toString();
     }*/
 
-    private TemperatureMeasurementPoint readTemperatureMeasurementPoint(String measurementKey) {
-        Optional<TemperatureMeasurementPoint> optPoint = temperatureMeasurementPointRepository.findById(measurementKey);
+    private TemperatureMeasurementPoint readTemperatureMeasurementPoint(String location) {
+        Optional<TemperatureMeasurementPoint> optPoint = temperatureMeasurementPointRepository.findById(location);
         if (optPoint.isEmpty()) {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+            return null;
         }
         return optPoint.get();
     }
