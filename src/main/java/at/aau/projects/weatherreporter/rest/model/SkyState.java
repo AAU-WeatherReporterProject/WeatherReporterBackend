@@ -10,14 +10,13 @@ public enum SkyState {
     CLEAR("4");
 
     private String skyStateCode;
-    SkyState(String skyStateCode)
-    {
+
+    SkyState(String skyStateCode) {
         this.skyStateCode = skyStateCode;
     }
 
     @JsonValue
-    public String getSkyStateCode()
-    {
+    public String getSkyStateCode() {
         return this.skyStateCode;
     }
 }

@@ -35,9 +35,9 @@ public class DataServiceImpl implements DataService {
         List<Measurement> measurementList = new ArrayList<>();
         if (data != null && data.getMetadata() != null && data.getMeasurements() != null && !data.getMeasurements().isEmpty()) {
             TemperatureMeasurementPoint point = readTemperatureMeasurementPoint(data.getMetadata().getKey());
-            if(point == null)
+            if (point == null) {
                 addMeasurementPoint(new MeasurementPoint(data.getMetadata().getKey()));
-
+            }
             for (TemperatureMeasurement inputMeasurement : data.getMeasurements()) {
                 Measurement measurement = new Measurement();
                 measurement.setTemperatureMeasurementPoint(point);
@@ -79,9 +79,9 @@ public class DataServiceImpl implements DataService {
     @Override
     public void addMeasurementPoint(MeasurementPoint measurementPoint) {
         TemperatureMeasurementPoint measurementPoint1 = readTemperatureMeasurementPoint(measurementPoint.getLocation());
-        if(measurementPoint1!=null)
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,"Measurement Point already exists");
-
+        if (measurementPoint1 != null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Measurement Point already exists");
+        }
         TemperatureMeasurementPoint point = new TemperatureMeasurementPoint();
         point.setLocation(measurementPoint.getLocation());
         temperatureMeasurementPointRepository.saveAndFlush(point);
