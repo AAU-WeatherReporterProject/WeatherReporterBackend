@@ -1,5 +1,6 @@
 package at.aau.projects.weatherreporter;
 
+import at.aau.projects.weatherreporter.rest.entity.Measurement;
 import at.aau.projects.weatherreporter.rest.entity.TemperatureMeasurementPoint;
 import at.aau.projects.weatherreporter.rest.model.MeasurementPoint;
 import at.aau.projects.weatherreporter.rest.repository.MeasurementRepository;
@@ -65,8 +66,9 @@ class DataServiceImplMeasurementPointTests {
 
     @Test
     void test_add_measurement_point_location_null() {
+        MeasurementPoint measurementPoint = new MeasurementPoint(null);
         HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
-            dataService.addMeasurementPoint(new MeasurementPoint(null));
+            dataService.addMeasurementPoint(measurementPoint);
         });
         assertEquals("expect http bad request status", HttpStatus.BAD_REQUEST, exception.getStatusCode());
     }
