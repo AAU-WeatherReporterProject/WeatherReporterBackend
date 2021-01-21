@@ -72,18 +72,7 @@ class DataServiceImplMeasurementTests {
         dataService.ingestData(data);
         verify(measurementRepository,times(0)).saveAll(any());
     }
-
-    @Test
-    void test_ingest_measurement_not_found() {
-        TemperatureData data = createTemperatureData();
-        Exception exception = assertThrows(HttpClientErrorException.class, () -> {
-            dataService.ingestData(data);
-        });
-        assertEquals("expect HttpClientErrorException exception",HttpClientErrorException.class, exception.getClass());
-        assertEquals("expect http not found status", HttpStatus.NOT_FOUND, ((HttpClientErrorException)exception).getStatusCode());
-    }
-
-
+    
     @Test
     void test_ingest_measurement() {
         TemperatureData data = createTemperatureData();

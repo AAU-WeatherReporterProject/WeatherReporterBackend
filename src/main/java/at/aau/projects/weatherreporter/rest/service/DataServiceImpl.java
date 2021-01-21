@@ -95,11 +95,6 @@ public class DataServiceImpl implements DataService {
                 .collect(Collectors.toList());
     }
 
-    //TODO if never needed again delete
-    /*private String generateMeasurementKey() {
-        return UUID.randomUUID().toString();
-    }*/
-
     private TemperatureMeasurementPoint readTemperatureMeasurementPoint(String location) {
         Optional<TemperatureMeasurementPoint> optPoint = temperatureMeasurementPointRepository.findById(location);
         if (optPoint.isEmpty()) {
