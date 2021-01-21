@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 @SpringBootTest
-class DataServiceImplTests {
+class DataServiceImplMeasurementTests {
 
     @Mock
     private TemperatureMeasurementPointRepository temperatureMeasurementPointRepository;
@@ -35,7 +35,7 @@ class DataServiceImplTests {
     private MeasurementRepository measurementRepository;
     private DataService dataService;
 
-    private final String MEASUREMENT_KEY ="123456789";
+    private final String LOCATION ="Klagenfurt";
 
     @BeforeEach
     void setup()
@@ -43,23 +43,7 @@ class DataServiceImplTests {
         dataService = new DataServiceImpl(measurementRepository,temperatureMeasurementPointRepository);
     }
 
-    @Test
-    void test_get_all_measurement_points() {
-        List<MeasurementPoint> measurementPoints_expected = new ArrayList<>();
-        measurementPoints_expected.add(new MeasurementPoint("name","locaiton","123456789"));
 
-        List<TemperatureMeasurementPoint> temperatureMeasurementPoints = new ArrayList<>();
-        TemperatureMeasurementPoint temperatureMeasurementPoint = new TemperatureMeasurementPoint();
-        temperatureMeasurementPoint.setMeasurementKey("123456789");
-        temperatureMeasurementPoint.setLocation("locaiton");
-        temperatureMeasurementPoint.setName("name");
-        temperatureMeasurementPoints.add(temperatureMeasurementPoint);
-
-        when(temperatureMeasurementPointRepository.findAll()).thenReturn(temperatureMeasurementPoints);
-
-        List<MeasurementPoint> measurementPointList = dataService.getAllMeasurementPoints();
-        assertEquals("list of measurements points",measurementPoints_expected,measurementPointList);
-    }
     @Test
     void test_ingest_data_null() {
         dataService.ingestData(null);
@@ -74,7 +58,7 @@ class DataServiceImplTests {
 
     @Test
     void test_ingest_measurements_null() {
-        Metadata metadata = new Metadata(MEASUREMENT_KEY);
+        Metadata metadata = new Metadata(LOCATION);
         TemperatureData data = new TemperatureData(metadata,null);
         dataService.ingestData(data);
         verify(measurementRepository,times(0)).saveAll(any());
@@ -84,7 +68,7 @@ class DataServiceImplTests {
     void test_ingest_measurement_empty() {
         TemperatureData data = createTemperatureData();
         data.getMeasurements().clear();
-        when(temperatureMeasurementPointRepository.findById(MEASUREMENT_KEY)).thenReturn(Optional.of(createTemperaturPoint()));
+        when(temperatureMeasurementPointRepository.findById(LOCATION)).thenReturn(Optional.of(createTemperaturePoint()));
         dataService.ingestData(data);
         verify(measurementRepository,times(0)).saveAll(any());
     }
@@ -103,7 +87,7 @@ class DataServiceImplTests {
     @Test
     void test_ingest_measurement() {
         TemperatureData data = createTemperatureData();
-        when(temperatureMeasurementPointRepository.findById(MEASUREMENT_KEY)).thenReturn(Optional.of(createTemperaturPoint()));
+        when(temperatureMeasurementPointRepository.findById(LOCATION)).thenReturn(Optional.of(createTemperaturePoint()));
         dataService.ingestData(data);
         final ArgumentCaptor<List<Measurement>> listMeasurements
                 = ArgumentCaptor.forClass(List.class);
@@ -113,61 +97,40 @@ class DataServiceImplTests {
         Assertions.assertEquals(data.getMeasurements().get(0).getSkyState(),measurements.get(0).getSky());
         Assertions.assertEquals(data.getMeasurements().get(0).getTemperature(),measurements.get(0).getTemperature());
         assertNotNull(measurements.get(0).getTimestamp());
-        Assertions.assertEquals(measurements.get(0).getTemperatureMeasurementPoint().getMeasurementKey(),createTemperaturPoint().getMeasurementKey());
+        Assertions.assertEquals(measurements.get(0).getTemperatureMeasurementPoint().getLocation(), createTemperaturePoint().getLocation());
     }
 
     @Test
-    void test_add_measurement_point_data_null() {
-        String measurementKey = dataService.addMeasurementPoint(null);
-        assertNull(measurementKey);
-    }
-
-    @Test
-    void test_add_measurement_point_data() {
-        MeasurementPoint measurementPoint = new MeasurementPoint("name","location",null);
-        when(temperatureMeasurementPointRepository.save(any(TemperatureMeasurementPoint.class))).thenAnswer(i -> i.getArguments()[0]);
-        String measurementKey = dataService.addMeasurementPoint(measurementPoint);
-        assertNotNull(measurementKey);
-        final ArgumentCaptor<TemperatureMeasurementPoint> temperatureMeasurementPointArgumentCaptor
-                = ArgumentCaptor.forClass(TemperatureMeasurementPoint.class);
-        verify(temperatureMeasurementPointRepository,times(1)).save(temperatureMeasurementPointArgumentCaptor.capture());
-        TemperatureMeasurementPoint temperatureMeasurementPoint = temperatureMeasurementPointArgumentCaptor.getValue();
-        assertEquals("measurement point location",measurementPoint.getLocation(),temperatureMeasurementPoint.getLocation());
-        assertEquals("measurement point name",measurementPoint.getName(),temperatureMeasurementPoint.getName());
-    }
-
-
-    @Test
-    void test_read_point_data_key_null() {
-        List<TemperatureMeasurement> temperatureMeasurements = dataService.readDataPoints(null,null,null);
+    void test_read_measurements_key_null() {
+        List<TemperatureMeasurement> temperatureMeasurements = dataService.readMeasurements(null,null,null);
         assertEquals("expected empty list",new ArrayList<>(),temperatureMeasurements);
     }
 
     @Test
-    void test_read_point_data_to_null() {
+    void test_read_measurements_to_null() {
         prepareDataForReadDataPoints();
-        List<TemperatureMeasurement> temperatureMeasurements = dataService.readDataPoints(null,"2020-12-09 23:59:00",MEASUREMENT_KEY);
+        List<TemperatureMeasurement> temperatureMeasurements = dataService.readMeasurements(null,"2020-12-09 23:59:00", LOCATION);
         assertEquals("number of entries",4,temperatureMeasurements.size());
     }
 
     @Test
-    void test_read_point_data_from_null() {
+    void test_read_measurements_from_null() {
         prepareDataForReadDataPoints();
-        List<TemperatureMeasurement> temperatureMeasurements = dataService.readDataPoints("2020-12-09 23:59:00",null,MEASUREMENT_KEY);
+        List<TemperatureMeasurement> temperatureMeasurements = dataService.readMeasurements("2020-12-09 23:59:00",null, LOCATION);
         assertEquals("number of entries",2,temperatureMeasurements.size());
     }
 
     @Test
-    void test_read_point_data_with_to_from() {
+    void test_read_measurements_with_to_from() {
         prepareDataForReadDataPoints();
-        List<TemperatureMeasurement> temperatureMeasurements = dataService.readDataPoints("2020-12-09 23:59:00","2020-12-09 23:59:00",MEASUREMENT_KEY);
+        List<TemperatureMeasurement> temperatureMeasurements = dataService.readMeasurements("2020-12-09 23:59:00","2020-12-09 23:59:00", LOCATION);
         assertEquals("number of entries",1,temperatureMeasurements.size());
     }
 
     @Test
-    void test_read_point_data_only_key() {
+    void test_read_measurements_only_key() {
         prepareDataForReadDataPoints();
-        List<TemperatureMeasurement> temperatureMeasurements = dataService.readDataPoints(null,null,MEASUREMENT_KEY);
+        List<TemperatureMeasurement> temperatureMeasurements = dataService.readMeasurements(null,null, LOCATION);
         assertEquals("number of entries",5,temperatureMeasurements.size());
     }
 
@@ -187,27 +150,27 @@ class DataServiceImplTests {
         for(int i=0; i<1; i++)
             measurementsKeyToFrom.add(createMeasurement());
 
-        when(measurementRepository.findAllByTemperatureMeasurementPoint_MeasurementKey(MEASUREMENT_KEY)).thenReturn(measurementsOnlyKey);
-        when(measurementRepository.findAllByTemperatureMeasurementPoint_MeasurementKeyAndTimestampBefore(anyString(),any(Timestamp.class)))
+        when(measurementRepository.findAllByTemperatureMeasurementPoint_Location(LOCATION)).thenReturn(measurementsOnlyKey);
+        when(measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampBefore(anyString(),any(Timestamp.class)))
                 .thenReturn(measurementsKeyTo);
-        when(measurementRepository.findAllByTemperatureMeasurementPoint_MeasurementKeyAndTimestampAfter(anyString(),any(Timestamp.class)))
+        when(measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampAfter(anyString(),any(Timestamp.class)))
                 .thenReturn(measurementsKeyFrom);
-        when(measurementRepository.findAllByTemperatureMeasurementPoint_MeasurementKeyAndTimestampBetween(anyString(),any(Timestamp.class),any(Timestamp.class)))
+        when(measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampBetween(anyString(),any(Timestamp.class),any(Timestamp.class)))
                 .thenReturn(measurementsKeyToFrom);
     }
 
     private TemperatureData createTemperatureData()
     {
-        Metadata metadata = new Metadata(MEASUREMENT_KEY);
+        Metadata metadata = new Metadata(LOCATION);
         List<TemperatureMeasurement> measurements = new ArrayList<>();
         TemperatureMeasurement measurement = new TemperatureMeasurement(12.0,SkyState.CLEAR,null);
         measurements.add(measurement);
         return new TemperatureData(metadata,measurements);
     }
 
-    private TemperatureMeasurementPoint createTemperaturPoint()
+    private TemperatureMeasurementPoint createTemperaturePoint()
     {
-        return new TemperatureMeasurementPoint(MEASUREMENT_KEY,"name","location");
+        return new TemperatureMeasurementPoint(LOCATION);
     }
 
     private Measurement createMeasurement ()
@@ -216,8 +179,6 @@ class DataServiceImplTests {
         measurement.setTemperature(12.0);
         measurement.setSky(SkyState.CLEAR);
         measurement.setTimestamp(new Timestamp(System.currentTimeMillis()));
-
         return measurement;
     }
-
 }

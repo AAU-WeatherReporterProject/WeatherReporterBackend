@@ -9,7 +9,7 @@ import java.util.List;
 public interface DataService {
     void ingestData(TemperatureData data);
 
-    List<TemperatureMeasurement> readDataPoints(String from, String to, String measurementKey);
+    List<TemperatureMeasurement> readMeasurements(String from, String to, String location);
 
     void addMeasurementPoint(MeasurementPoint measurementPoint);
 

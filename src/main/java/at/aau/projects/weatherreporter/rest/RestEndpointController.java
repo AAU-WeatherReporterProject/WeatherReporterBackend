@@ -38,6 +38,6 @@ public class RestEndpointController {
     @GetMapping(value = "/dataPoints")
     public List<TemperatureMeasurement> getDataPoints(
             @Param("from") String from, @Param("to") String to, @Param("key") String key) {
-        return dataService.readDataPoints(from, to, key);
+        return dataService.readMeasurements(from, to, key);
     }
 }

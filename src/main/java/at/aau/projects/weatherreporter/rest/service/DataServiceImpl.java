@@ -51,7 +51,7 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public List<TemperatureMeasurement> readDataPoints(String from, String to, String location) {
+    public List<TemperatureMeasurement> readMeasurements(String from, String to, String location) {
         List<TemperatureMeasurement> temperatureMeasurements = new ArrayList<>();
         List<Measurement> measurements;
         if (location != null) {
