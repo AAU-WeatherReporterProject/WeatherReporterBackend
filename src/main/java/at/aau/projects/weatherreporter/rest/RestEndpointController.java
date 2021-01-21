@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("v1")
-public class TestEndpoint {
+public class RestEndpointController {
 
     @Autowired
     private DataService dataService;
