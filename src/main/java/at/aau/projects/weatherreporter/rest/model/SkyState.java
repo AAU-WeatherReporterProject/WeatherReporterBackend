@@ -1,5 +1,6 @@
 package at.aau.projects.weatherreporter.rest.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum SkyState {
