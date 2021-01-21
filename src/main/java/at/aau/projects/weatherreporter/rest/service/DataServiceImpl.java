@@ -78,6 +78,10 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public void addMeasurementPoint(MeasurementPoint measurementPoint) {
+        if (measurementPoint == null || measurementPoint.getLocation() == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "No Measurement Point Location given");
+        }
+
         TemperatureMeasurementPoint measurementPoint1 = readTemperatureMeasurementPoint(measurementPoint.getLocation());
         if (measurementPoint1 != null) {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Measurement Point already exists");

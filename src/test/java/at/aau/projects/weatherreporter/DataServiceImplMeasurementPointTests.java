@@ -11,10 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
@@ -54,14 +57,18 @@ class DataServiceImplMeasurementPointTests {
 
     @Test
     void test_add_measurement_point_null() {
-        dataService.addMeasurementPoint(null);
-        verify(temperatureMeasurementPointRepository,times(0)).saveAndFlush(any());
+        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
+            dataService.addMeasurementPoint(null);
+        });
+        assertEquals("expect http bad request status", HttpStatus.BAD_REQUEST, exception.getStatusCode());
     }
 
     @Test
     void test_add_measurement_point_location_null() {
-        dataService.addMeasurementPoint(new MeasurementPoint(null));
-        verify(temperatureMeasurementPointRepository,times(0)).saveAndFlush(any());
+        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
+            dataService.addMeasurementPoint(new MeasurementPoint(null));
+        });
+        assertEquals("expect http bad request status", HttpStatus.BAD_REQUEST, exception.getStatusCode());
     }
 
     @Test

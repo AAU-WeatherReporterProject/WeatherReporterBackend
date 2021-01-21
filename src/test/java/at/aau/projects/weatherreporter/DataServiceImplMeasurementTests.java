@@ -72,7 +72,7 @@ class DataServiceImplMeasurementTests {
         dataService.ingestData(data);
         verify(measurementRepository,times(0)).saveAll(any());
     }
-    
+
     @Test
     void test_ingest_measurement() {
         TemperatureData data = createTemperatureData();
