@@ -1,6 +1,5 @@
-package at.aau.projects.weatherreporter;
+package at.aau.projects.weatherreporter.unittests;
 
-import at.aau.projects.weatherreporter.rest.entity.Measurement;
 import at.aau.projects.weatherreporter.rest.entity.TemperatureMeasurementPoint;
 import at.aau.projects.weatherreporter.rest.model.MeasurementPoint;
 import at.aau.projects.weatherreporter.rest.repository.MeasurementRepository;
@@ -9,9 +8,10 @@ import at.aau.projects.weatherreporter.rest.service.DataService;
 import at.aau.projects.weatherreporter.rest.service.DataServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -19,11 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class DataServiceImplMeasurementPointTests {
 
     @Mock
