@@ -32,20 +32,28 @@ public class DataServiceImpl implements DataService {
     @Override
     public void ingestData(TemperatureData data) {
         List<Measurement> measurementList = new ArrayList<>();
-        if (data != null && data.getMetadata() != null && data.getMeasurements() != null && !data.getMeasurements().isEmpty()) {
-            TemperatureMeasurementPoint point = readTemperatureMeasurementPoint(data.getMetadata().getKey());
-            if (point == null) {
-                addMeasurementPoint(new MeasurementPoint(data.getMetadata().getKey()));
-            }
-            for (TemperatureMeasurement inputMeasurement : data.getMeasurements()) {
-                Measurement measurement = new Measurement();
-                measurement.setTemperatureMeasurementPoint(point);
-                measurement.setTemperature(inputMeasurement.getTemperature());
-                measurement.setSky(inputMeasurement.getSkyState());
-                measurement.setTimestamp(new Timestamp(System.currentTimeMillis()));
-                measurementList.add(measurement);
-            }
-            measurementRepository.saveAll(measurementList);
+        validateTemperatureData(data);
+        if (!temperatureMeasurementPointRepository.existsById(data.getMetadata().getKey())) {
+            addMeasurementPoint(new MeasurementPoint(data.getMetadata().getKey()));
+        }
+        for (TemperatureMeasurement inputMeasurement : data.getMeasurements()) {
+            Measurement measurement = new Measurement();
+            measurement.setTemperatureMeasurementPoint(new TemperatureMeasurementPoint(data.getMetadata().getKey()));
+            measurement.setTemperature(inputMeasurement.getTemperature());
+            measurement.setSky(inputMeasurement.getSkyState());
+            measurement.setTimestamp(new Timestamp(System.currentTimeMillis()));
+            measurementList.add(measurement);
+        }
+        measurementRepository.saveAll(measurementList);
+
+    }
+
+    protected void validateTemperatureData(TemperatureData data) {
+        if (data == null || data.getMetadata() == null || data.getMetadata().getKey()==null ) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing mandatory values");
+        }
+        if (data.getMeasurements() == null || data.getMeasurements().isEmpty()) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "No Measurements given to add");
         }
     }
 
