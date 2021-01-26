@@ -140,8 +140,11 @@ class DataServiceImplMeasurementTests {
 
     @Test
     void test_read_measurements_key_null() {
-        List<TemperatureMeasurement> temperatureMeasurements = dataService.readMeasurements(null, null, null);
-        assertEquals("expected empty list", new ArrayList<>(), temperatureMeasurements);
+        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
+            dataService.readMeasurements(null, null, null);
+        });
+        assertEquals("http status", exception.getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertEquals("exception text", "400 No Location given", exception.getMessage());
     }
 
     @Test

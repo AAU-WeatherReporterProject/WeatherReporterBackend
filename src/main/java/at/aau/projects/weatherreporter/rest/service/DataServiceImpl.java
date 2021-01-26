@@ -49,7 +49,7 @@ public class DataServiceImpl implements DataService {
     }
 
     protected void validateTemperatureData(TemperatureData data) {
-        if (data == null || data.getMetadata() == null || data.getMetadata().getKey()==null ) {
+        if (data == null || data.getMetadata() == null || data.getMetadata().getKey() == null) {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing mandatory values");
         }
         if (data.getMeasurements() == null || data.getMeasurements().isEmpty()) {
@@ -61,24 +61,24 @@ public class DataServiceImpl implements DataService {
     public List<TemperatureMeasurement> readMeasurements(String from, String to, String location) {
         List<TemperatureMeasurement> temperatureMeasurements = new ArrayList<>();
         List<Measurement> measurements;
-        if (location != null) {
+        if (location == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "No Location given");
+        }
+        Timestamp timestampFrom = from != null ? Timestamp.valueOf(from) : null;
+        Timestamp timestampTo = to != null ? Timestamp.valueOf(to) : null;
+        if (timestampFrom != null && timestampTo != null) {
+            measurements = measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampBetween(location, timestampFrom, timestampTo);
+        } else if (timestampFrom != null) {
+            measurements = measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampAfter(location, timestampFrom);
+        } else if (timestampTo != null) {
+            measurements = measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampBefore(location, timestampTo);
+        } else {
+            measurements = measurementRepository.findAllByTemperatureMeasurementPoint_Location(location);
+        }
 
-            Timestamp timestampFrom = from != null ? Timestamp.valueOf(from) : null;
-            Timestamp timestampTo = to != null ? Timestamp.valueOf(to) : null;
-            if (timestampFrom != null && timestampTo != null) {
-                measurements = measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampBetween(location, timestampFrom, timestampTo);
-            } else if (timestampFrom != null) {
-                measurements = measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampAfter(location, timestampFrom);
-            } else if (timestampTo != null) {
-                measurements = measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampBefore(location, timestampTo);
-            } else {
-                measurements = measurementRepository.findAllByTemperatureMeasurementPoint_Location(location);
-            }
-
-            measurements.sort(Comparator.comparing(Measurement::getTimestamp).reversed());
-            for (Measurement measurement : measurements) {
-                temperatureMeasurements.add(new TemperatureMeasurement(measurement.getTemperature(), measurement.getSky(), measurement.getTimestamp().toString()));
-            }
+        measurements.sort(Comparator.comparing(Measurement::getTimestamp).reversed());
+        for (Measurement measurement : measurements) {
+            temperatureMeasurements.add(new TemperatureMeasurement(measurement.getTemperature(), measurement.getSky(), measurement.getTimestamp().toString()));
         }
         return temperatureMeasurements;
     }
