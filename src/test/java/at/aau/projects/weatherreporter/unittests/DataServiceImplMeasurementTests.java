@@ -47,46 +47,95 @@ class DataServiceImplMeasurementTests {
 
     @Test
     void test_ingest_data_null() {
-        dataService.ingestData(null);
-        verify(measurementRepository, times(0)).saveAll(any());
+        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
+            dataService.ingestData(null);
+        });
+        assertEquals("http status",exception.getStatusCode(),HttpStatus.BAD_REQUEST);
+        assertEquals("exception text", "400 Missing mandatory values", exception.getMessage());
     }
 
     @Test
     void test_ingest_metadata_null() {
-        dataService.ingestData(new TemperatureData());
-        verify(measurementRepository, times(0)).saveAll(any());
+        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
+            dataService.ingestData(new TemperatureData());
+        });
+        assertEquals("http status", exception.getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertEquals("exception text", "400 Missing mandatory values", exception.getMessage());
+    }
+
+
+    @Test
+    void test_ingest_metadata_key_null() {
+        TemperatureData data = new TemperatureData(new Metadata(null),createTemperatureData().getMeasurements());
+        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
+            dataService.ingestData(data);
+        });
+        assertEquals("http status", exception.getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertEquals("exception text", "400 Missing mandatory values", exception.getMessage());
     }
 
     @Test
     void test_ingest_measurements_null() {
         Metadata metadata = new Metadata(LOCATION);
         TemperatureData data = new TemperatureData(metadata, null);
-        dataService.ingestData(data);
-        verify(measurementRepository, times(0)).saveAll(any());
+        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
+            dataService.ingestData(data);
+        });
+        assertEquals("http status", exception.getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertEquals("exception text", "400 No Measurements given to add", exception.getMessage());
     }
 
     @Test
     void test_ingest_measurement_empty() {
         TemperatureData data = createTemperatureData();
         data.getMeasurements().clear();
-        dataService.ingestData(data);
-        verify(measurementRepository, times(0)).saveAll(any());
+        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
+            dataService.ingestData(data);
+        });
+        assertEquals("http status", exception.getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertEquals("exception text", "400 No Measurements given to add", exception.getMessage());
     }
 
     @Test
     void test_ingest_measurement() {
         TemperatureData data = createTemperatureData();
-        when(temperatureMeasurementPointRepository.findById(LOCATION)).thenReturn(Optional.of(createTemperaturePoint()));
+        when(temperatureMeasurementPointRepository.existsById(LOCATION)).thenReturn(Boolean.TRUE);
         dataService.ingestData(data);
         final ArgumentCaptor<List<Measurement>> listMeasurements
                 = ArgumentCaptor.forClass(List.class);
         verify(measurementRepository, times(1)).saveAll(listMeasurements.capture());
         List<Measurement> measurements = listMeasurements.getValue();
+        assertNotNull(measurements);
         assertEquals("number of inserted measurements", 1, measurements.size());
         Assertions.assertEquals(data.getMeasurements().get(0).getSkyState(), measurements.get(0).getSky());
         Assertions.assertEquals(data.getMeasurements().get(0).getTemperature(), measurements.get(0).getTemperature());
         assertNotNull(measurements.get(0).getTimestamp());
         Assertions.assertEquals(measurements.get(0).getTemperatureMeasurementPoint().getLocation(), createTemperaturePoint().getLocation());
+    }
+
+    @Test
+    void test_ingest_measurement_and_measurement_point_not_exists_yet() {
+        TemperatureData data = createTemperatureData();
+        dataService.ingestData(data);
+        final ArgumentCaptor<List<Measurement>> listMeasurements
+                = ArgumentCaptor.forClass(List.class);
+
+        final ArgumentCaptor<TemperatureMeasurementPoint> temperatureMeasurementPointArgumentCaptor
+                = ArgumentCaptor.forClass(TemperatureMeasurementPoint.class);
+        verify(temperatureMeasurementPointRepository,times(1)).saveAndFlush(temperatureMeasurementPointArgumentCaptor.capture());
+        verify(measurementRepository, times(1)).saveAll(listMeasurements.capture());
+
+        TemperatureMeasurementPoint point = temperatureMeasurementPointArgumentCaptor.getValue();
+        List<Measurement> measurements = listMeasurements.getValue();
+        assertNotNull(measurements);
+        assertEquals("number of inserted measurements", 1, measurements.size());
+        Assertions.assertEquals(data.getMeasurements().get(0).getSkyState(), measurements.get(0).getSky());
+        Assertions.assertEquals(data.getMeasurements().get(0).getTemperature(), measurements.get(0).getTemperature());
+        assertNotNull(measurements.get(0).getTimestamp());
+        Assertions.assertEquals(measurements.get(0).getTemperatureMeasurementPoint().getLocation(), LOCATION);
+
+        assertNotNull(point);
+        assertEquals("measurement point location",LOCATION, point.getLocation());
     }
 
     @Test
