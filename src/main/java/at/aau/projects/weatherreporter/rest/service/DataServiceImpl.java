@@ -15,10 +15,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service
+@Service("DataService")
 public class DataServiceImpl implements DataService {
 
     private final MeasurementRepository measurementRepository;
@@ -103,13 +102,5 @@ public class DataServiceImpl implements DataService {
         return temperatureMeasurementPoints.stream()
                 .map(temp -> new MeasurementPoint(temp.getLocation()))
                 .collect(Collectors.toList());
-    }
-
-    private TemperatureMeasurementPoint readTemperatureMeasurementPoint(String location) {
-        Optional<TemperatureMeasurementPoint> optPoint = temperatureMeasurementPointRepository.findById(location);
-        if (optPoint.isEmpty()) {
-            return null;
-        }
-        return optPoint.get();
     }
 }
