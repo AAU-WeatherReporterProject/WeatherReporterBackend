@@ -6,6 +6,7 @@ import at.aau.projects.weatherreporter.rest.repository.MeasurementRepository;
 import at.aau.projects.weatherreporter.rest.repository.TemperatureMeasurementPointRepository;
 import at.aau.projects.weatherreporter.rest.service.DataService;
 import at.aau.projects.weatherreporter.rest.service.DataServiceImpl;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -66,6 +67,16 @@ class DataServiceImplMeasurementPointTests {
     @Test
     void test_add_measurement_point_location_null() {
         MeasurementPoint measurementPoint = new MeasurementPoint(null);
+        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
+            dataService.addMeasurementPoint(measurementPoint);
+        });
+        assertEquals("expect http bad request status", HttpStatus.BAD_REQUEST, exception.getStatusCode());
+    }
+
+    @Test
+    void test_add_measurement_point_already_exists() {
+        MeasurementPoint measurementPoint = new MeasurementPoint(LOCATION);
+        when(temperatureMeasurementPointRepository.existsById(LOCATION)).thenReturn(Boolean.TRUE);
         HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
             dataService.addMeasurementPoint(measurementPoint);
         });
