@@ -29,4 +29,14 @@ public class Measurement {
     private Timestamp timestamp;
     private Double temperature;
     private SkyState sky;
+
+    public Measurement() {
+    }
+
+    public Measurement(TemperatureMeasurementPoint point, Timestamp timestamp, Double temperature, SkyState skyState) {
+        this.temperatureMeasurementPoint = point;
+        this.timestamp = timestamp;
+        this.temperature = temperature;
+        this.sky = skyState;
+    }
 }
