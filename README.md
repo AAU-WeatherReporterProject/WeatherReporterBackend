@@ -11,6 +11,9 @@
 ###Data Ingest:
 post "/api/v1/ingest" 
 
+if there is no measurement point for the given location, 
+the measurement point will be created. 
+
 Example for Json Body of post request
 ````
 {
