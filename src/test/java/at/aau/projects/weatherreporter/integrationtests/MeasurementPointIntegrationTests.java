@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class MeasurementPointIntegrationTests {
+class MeasurementPointIntegrationTests {
 
     @Autowired
     protected MockMvc mvc;
@@ -44,6 +44,9 @@ public class MeasurementPointIntegrationTests {
     private TemperatureMeasurementPointRepository temperatureMeasurementPointRepository;
     @Autowired
     private MeasurementRepository measurementRepository;
+
+    private final String MEASUREMENT_POINT_1 ="TestLocation";
+    private final String MEASUREMENT_POINT_2 ="12345678";
 
     @BeforeEach
     public void setUp()
@@ -61,14 +64,14 @@ public class MeasurementPointIntegrationTests {
     }
 
     @Test
-    public void getMeasurementPoints() throws Exception {
+    void getMeasurementPoints() throws Exception {
         this.mvc.perform(get("/v1/measurementPoints"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(2));
     }
 
     @Test
-    public void addMeasurementPoints() throws Exception {
+    void addMeasurementPoints() throws Exception {
         this.mvc.perform(post("/v1/measurementPoint").contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(mapToJson(new MeasurementPoint("test2323"))))
@@ -80,11 +83,48 @@ public class MeasurementPointIntegrationTests {
         assertTrue("contains temperature point 'test2323' ", points.stream().anyMatch(point -> "test2323".equals(point.getLocation())));
     }
 
+    @Test
+    void addMeasurementPoints_no_content() throws Exception {
+        this.mvc.perform(post("/v1/measurementPoint").contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        List<TemperatureMeasurementPoint> points = temperatureMeasurementPointRepository.findAll();
+        assertNotNull("temperature points", points);
+        assertEquals("number of temperature points", 2, points.size());
+    }
+
+    @Test
+    void addMeasurementPoints_empty_json_content() throws Exception {
+        this.mvc.perform(post("/v1/measurementPoint").contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content("{}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().string("400 No Measurement Point Location given"));
+
+        List<TemperatureMeasurementPoint> points = temperatureMeasurementPointRepository.findAll();
+        assertNotNull("temperature points", points);
+        assertEquals("number of temperature points", 2, points.size());
+    }
+
+    @Test
+    void addMeasurementPoints_point_already_exists() throws Exception {
+        this.mvc.perform(post("/v1/measurementPoint").contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(mapToJson(new MeasurementPoint(MEASUREMENT_POINT_1))))
+                .andExpect(status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().string("400 Measurement Point already exists"));
+
+        List<TemperatureMeasurementPoint> points = temperatureMeasurementPointRepository.findAll();
+        assertNotNull("temperature points", points);
+        assertEquals("number of temperature points", 2, points.size());
+    }
+
     private void addTestValues()
     {
         List<Measurement> measurementList = new ArrayList<>();
-        TemperatureMeasurementPoint point = new TemperatureMeasurementPoint("TestLocation");
-        TemperatureMeasurementPoint point2 = new TemperatureMeasurementPoint("123456789");
+        TemperatureMeasurementPoint point = new TemperatureMeasurementPoint(MEASUREMENT_POINT_1);
+        TemperatureMeasurementPoint point2 = new TemperatureMeasurementPoint(MEASUREMENT_POINT_2);
 
         temperatureMeasurementPointRepository.saveAndFlush(point);
         temperatureMeasurementPointRepository.saveAndFlush(point2);
