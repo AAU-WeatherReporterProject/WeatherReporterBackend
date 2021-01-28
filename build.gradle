@@ -11,7 +11,7 @@ plugins {
 }
 
 group = 'at.aau.projects'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.2'
 sourceCompatibility = '11'
 
 configurations {
@@ -38,6 +38,10 @@ dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // Amazon AWS-Dependency -- DO NOT CHANGE VERSION
+    implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.465')
+    implementation 'com.amazonaws:aws-java-sdk-s3'
 
     runtimeOnly 'com.h2database:h2'
 }
