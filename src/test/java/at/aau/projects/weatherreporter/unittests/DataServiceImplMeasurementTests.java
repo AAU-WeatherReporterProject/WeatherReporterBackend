@@ -2,7 +2,10 @@ package at.aau.projects.weatherreporter.unittests;
 
 import at.aau.projects.weatherreporter.rest.entity.Measurement;
 import at.aau.projects.weatherreporter.rest.entity.TemperatureMeasurementPoint;
-import at.aau.projects.weatherreporter.rest.model.*;
+import at.aau.projects.weatherreporter.rest.model.Metadata;
+import at.aau.projects.weatherreporter.rest.model.SkyState;
+import at.aau.projects.weatherreporter.rest.model.TemperatureData;
+import at.aau.projects.weatherreporter.rest.model.TemperatureMeasurement;
 import at.aau.projects.weatherreporter.rest.repository.MeasurementRepository;
 import at.aau.projects.weatherreporter.rest.repository.TemperatureMeasurementPointRepository;
 import at.aau.projects.weatherreporter.rest.service.DataService;
@@ -14,16 +17,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
@@ -47,29 +49,23 @@ class DataServiceImplMeasurementTests {
 
     @Test
     void test_ingest_data_null() {
-        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
-            dataService.ingestData(null);
-        });
+        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> dataService.ingestData(null));
         assertEquals("http status",exception.getStatusCode(),HttpStatus.BAD_REQUEST);
         assertEquals("exception text", "400 Missing mandatory values", exception.getMessage());
     }
 
     @Test
     void test_ingest_metadata_null() {
-        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
-            dataService.ingestData(new TemperatureData());
-        });
+        TemperatureData data = new TemperatureData();
+        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> dataService.ingestData(data));
         assertEquals("http status", exception.getStatusCode(), HttpStatus.BAD_REQUEST);
         assertEquals("exception text", "400 Missing mandatory values", exception.getMessage());
     }
 
-
     @Test
     void test_ingest_metadata_key_null() {
         TemperatureData data = new TemperatureData(new Metadata(null),createTemperatureData().getMeasurements());
-        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
-            dataService.ingestData(data);
-        });
+        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> dataService.ingestData(data));
         assertEquals("http status", exception.getStatusCode(), HttpStatus.BAD_REQUEST);
         assertEquals("exception text", "400 Missing mandatory values", exception.getMessage());
     }
@@ -78,9 +74,7 @@ class DataServiceImplMeasurementTests {
     void test_ingest_measurements_null() {
         Metadata metadata = new Metadata(LOCATION);
         TemperatureData data = new TemperatureData(metadata, null);
-        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
-            dataService.ingestData(data);
-        });
+        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> dataService.ingestData(data));
         assertEquals("http status", exception.getStatusCode(), HttpStatus.BAD_REQUEST);
         assertEquals("exception text", "400 No Measurements given to add", exception.getMessage());
     }
@@ -89,9 +83,7 @@ class DataServiceImplMeasurementTests {
     void test_ingest_measurement_empty() {
         TemperatureData data = createTemperatureData();
         data.getMeasurements().clear();
-        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
-            dataService.ingestData(data);
-        });
+        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> dataService.ingestData(data));
         assertEquals("http status", exception.getStatusCode(), HttpStatus.BAD_REQUEST);
         assertEquals("exception text", "400 No Measurements given to add", exception.getMessage());
     }
@@ -140,9 +132,7 @@ class DataServiceImplMeasurementTests {
 
     @Test
     void test_read_measurements_key_null() {
-        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
-            dataService.readMeasurements(null, null, null);
-        });
+        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> dataService.readMeasurements(null, null, null));
         assertEquals("http status", exception.getStatusCode(), HttpStatus.BAD_REQUEST);
         assertEquals("exception text", "400 No Location given", exception.getMessage());
     }
