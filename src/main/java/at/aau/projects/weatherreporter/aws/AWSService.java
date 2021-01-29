@@ -77,7 +77,6 @@ public class AWSService implements DataService {
 
     @PostConstruct
     public void initializeAWS(){
-
         utils.launchS3Instance();
         System.out.println("AWS Services started.");
     }

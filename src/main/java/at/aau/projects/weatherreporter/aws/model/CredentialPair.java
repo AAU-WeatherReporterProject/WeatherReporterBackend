@@ -1,4 +1,4 @@
-package at.aau.projects.weatherreporter.aws.service;
+package at.aau.projects.weatherreporter.aws.model;
 
 import com.amazonaws.auth.AWSCredentials;
 import org.springframework.beans.factory.annotation.Value;

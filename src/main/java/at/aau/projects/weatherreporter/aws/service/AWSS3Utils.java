@@ -1,7 +1,9 @@
 package at.aau.projects.weatherreporter.aws.service;
 
 
+import at.aau.projects.weatherreporter.aws.model.CredentialPair;
 import at.aau.projects.weatherreporter.aws.model.Region;
+import at.aau.projects.weatherreporter.aws.model.S3Bucket;
 import at.aau.projects.weatherreporter.rest.model.MeasurementPoint;
 import at.aau.projects.weatherreporter.rest.model.TemperatureData;
 import at.aau.projects.weatherreporter.rest.model.TemperatureMeasurement;
@@ -23,26 +25,18 @@ public class AWSS3Utils {
     /**
      * Client initiatior
      */
-    private AmazonS3 amazonS3;
-
-    /**
-     * Bucket-URL
-     * @implNote https://<bucket-name>.s3.amazonaws.com/<filename>
-     */
-    @Value("${default.url:})")
-    private String awsUrl;
-
-    /**
-     * Bucketname for direct calls
-     */
-    @Value("${default.name:})")
-    private String bucketName;
+    public static AmazonS3 amazonS3;
 
     /**
      * Object to hold keys
      * @see CredentialPair
      */
     private CredentialPair awsCredPair;
+
+    /**
+     * Object holding specific bucket
+     */
+    private S3Bucket s3Bucket;
 
     /**
      * Region specifying where bucket will be created
@@ -57,65 +51,39 @@ public class AWSS3Utils {
 
     public AWSS3Utils(String accessKey, String secretKey) {
         awsCredPair = new CredentialPair(accessKey, secretKey);
-
     }
 
     public AWSS3Utils(String awsUrl, String bucketName, String accessKey, String secretKey, String region) {
         awsCredPair = new CredentialPair(accessKey, secretKey);
-        this.awsUrl = awsUrl;
-        this.bucketName = bucketName;
+        s3Bucket = new S3Bucket(awsUrl, bucketName);
         this.region = region;
     }
 
     public void launchS3Instance() {
         BasicAWSCredentials creds = new BasicAWSCredentials(awsCredPair.getAWSSecretKey(), awsCredPair.getAWSSecretKey());
         amazonS3 = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(creds)).build();
-
-        createBucket();
+        s3Bucket.createBucket();
     }
 
     public void shutdownS3Instance() {
-        deleteBucket();
+        s3Bucket.deleteBucket();
     }
 
     public void addTemperatureData(TemperatureData data) {
-
+        // TODO
     }
 
     public List<TemperatureMeasurement> readMeasurements(String from, String to, String location) {
-
-
+        // TODO
         return null;
     }
 
     public void addMeasurementPoints() {
-
+        // TODO
     }
 
     public List<MeasurementPoint> getMeasurementPoints() {
-
+        // TODO
         return null;
-    }
-
-    /**
-     */
-    private void createBucket() {
-        try {
-            amazonS3.createBucket(bucketName);
-            System.out.println("Successfully created " + bucketName );
-        }catch(AmazonS3Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     */
-    private void deleteBucket() {
-        try {
-            amazonS3.deleteBucket(bucketName);
-            System.out.println("Successfully deleted " + bucketName);
-        }catch(AmazonS3Exception e) {
-            e.printStackTrace();
-        }
     }
 }
