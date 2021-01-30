@@ -28,15 +28,19 @@ public class Measurement {
     private TemperatureMeasurementPoint temperatureMeasurementPoint;
     private Timestamp timestamp;
     private Double temperature;
+    private Integer humidity;
+    private Double pressure;
     private SkyState sky;
 
     public Measurement() {
     }
 
-    public Measurement(TemperatureMeasurementPoint point, Timestamp timestamp, Double temperature, SkyState skyState) {
+    public Measurement(TemperatureMeasurementPoint point, Timestamp timestamp, Double temperature, Integer humidity, Double pressure, SkyState skyState) {
         this.temperatureMeasurementPoint = point;
         this.timestamp = timestamp;
         this.temperature = temperature;
+        this.humidity = humidity;
+        this.pressure = pressure;
         this.sky = skyState;
     }
 }

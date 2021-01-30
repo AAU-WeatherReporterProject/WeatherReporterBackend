@@ -14,7 +14,19 @@ post "/api/v1/ingest"
 if there is no measurement point for the given location, 
 the measurement point will be created. 
 
-Example for Json Body of post request
+#####temperature 
+- has a range of validity from -60 to 100
+- is mandatory parameter
+
+#####humidity 
+- is a percentage value and therefore has a range of validity from 0 to 100
+- is an optional parameter
+
+#####pressure
+- has a range of validity from 800 to 1100
+- is an optional parameter
+
+Example of a  Json Body for a post request 
 ````
 {
     "metadata": {
@@ -23,7 +35,9 @@ Example for Json Body of post request
     "measurements": [
         {         
             "temperature": "12.11",
-            "skyState": "2"
+            "skyState": "2",
+            "humidity": "99",
+            "pressure": "960.24588",
         }
     ]
 }
@@ -37,9 +51,8 @@ post "/api/v1/measurementPoint"
 	"location":"wos geht die dos on"
 }
 ````
-As result you get the measurement key 
-
-Example : 7eb039af-9042-4972-8575-ca1b2adf753e
+The location is the only attribute of a measurement point and therefore 
+the primary key. 
 
 ###Get all measurement points
 get "/api/v1/measurementPoints"

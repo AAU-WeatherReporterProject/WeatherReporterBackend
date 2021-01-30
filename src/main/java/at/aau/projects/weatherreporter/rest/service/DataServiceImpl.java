@@ -40,6 +40,8 @@ public class DataServiceImpl implements DataService {
             measurement.setTemperatureMeasurementPoint(new TemperatureMeasurementPoint(data.getMetadata().getKey()));
             measurement.setTemperature(inputMeasurement.getTemperature());
             measurement.setSky(inputMeasurement.getSkyState());
+            measurement.setHumidity(inputMeasurement.getHumidity());
+            measurement.setPressure(inputMeasurement.getPressure());
             measurement.setTimestamp(new Timestamp(System.currentTimeMillis()));
             measurementList.add(measurement);
         }
@@ -53,6 +55,17 @@ public class DataServiceImpl implements DataService {
         }
         if (data.getMeasurements() == null || data.getMeasurements().isEmpty()) {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "No Measurements given to add");
+        }
+        for (TemperatureMeasurement measurement : data.getMeasurements()) {
+            if (measurement.getTemperature() == null || measurement.getTemperature() < -60 || measurement.getTemperature() > 100) {
+                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "invalid temperature value:" + measurement.getTemperature());
+            }
+            if (measurement.getHumidity() != null && (measurement.getHumidity() < 0 || measurement.getHumidity() > 100)) {
+                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "invalid humidity value:" + measurement.getHumidity());
+            }
+            if (measurement.getPressure() != null && (measurement.getPressure() < 800 || measurement.getPressure() > 1100)) {
+                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "invalid pressure value:" + measurement.getPressure());
+            }
         }
     }
 
@@ -77,7 +90,8 @@ public class DataServiceImpl implements DataService {
 
         measurements.sort(Comparator.comparing(Measurement::getTimestamp).reversed());
         for (Measurement measurement : measurements) {
-            temperatureMeasurements.add(new TemperatureMeasurement(measurement.getTemperature(), measurement.getSky(), measurement.getTimestamp().toString()));
+            temperatureMeasurements.add(new TemperatureMeasurement(measurement.getTemperature(), measurement.getHumidity(),
+                    measurement.getPressure(), measurement.getSky(), measurement.getTimestamp().toString()));
         }
         return temperatureMeasurements;
     }

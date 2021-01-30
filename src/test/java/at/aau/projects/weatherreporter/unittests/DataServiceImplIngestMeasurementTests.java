@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
-class DataServiceImplMeasurementTests {
+class DataServiceImplIngestMeasurementTests {
 
     @Mock
     private TemperatureMeasurementPointRepository temperatureMeasurementPointRepository;
@@ -130,64 +130,11 @@ class DataServiceImplMeasurementTests {
         assertEquals("measurement point location",LOCATION, point.getLocation());
     }
 
-    @Test
-    void test_read_measurements_key_null() {
-        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> dataService.readMeasurements(null, null, null));
-        assertEquals("http status", exception.getStatusCode(), HttpStatus.BAD_REQUEST);
-        assertEquals("exception text", "400 No Location given", exception.getMessage());
-    }
-
-    @Test
-    void test_read_measurements_to_null() {
-        List<Measurement> measurementsKeyTo = new ArrayList<>();
-        for (int i = 0; i < 4; i++)
-            measurementsKeyTo.add(createMeasurement());
-        when(measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampBefore(anyString(), any(Timestamp.class)))
-                .thenReturn(measurementsKeyTo);
-
-        List<TemperatureMeasurement> temperatureMeasurements = dataService.readMeasurements(null, "2020-12-09 23:59:00", LOCATION);
-        assertEquals("number of entries", 4, temperatureMeasurements.size());
-    }
-
-    @Test
-    void test_read_measurements_from_null() {
-        List<Measurement> measurementsKeyFrom = new ArrayList<>();
-        for (int i = 0; i < 2; i++)
-            measurementsKeyFrom.add(createMeasurement());
-        when(measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampAfter(anyString(), any(Timestamp.class)))
-                .thenReturn(measurementsKeyFrom);
-
-        List<TemperatureMeasurement> temperatureMeasurements = dataService.readMeasurements("2020-12-09 23:59:00", null, LOCATION);
-        assertEquals("number of entries", 2, temperatureMeasurements.size());
-    }
-
-    @Test
-    void test_read_measurements_with_to_from() {
-        List<Measurement> measurementsKeyToFrom = new ArrayList<>();
-        for (int i = 0; i < 1; i++)
-            measurementsKeyToFrom.add(createMeasurement());
-        when(measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampBetween(anyString(), any(Timestamp.class), any(Timestamp.class)))
-                .thenReturn(measurementsKeyToFrom);
-
-        List<TemperatureMeasurement> temperatureMeasurements = dataService.readMeasurements("2020-12-09 23:59:00", "2020-12-09 23:59:00", LOCATION);
-        assertEquals("number of entries", 1, temperatureMeasurements.size());
-    }
-
-    @Test
-    void test_read_measurements_only_key() {
-        List<Measurement> measurementsOnlyKey = new ArrayList<>();
-        for (int i = 0; i < 5; i++)
-            measurementsOnlyKey.add(createMeasurement());
-        when(measurementRepository.findAllByTemperatureMeasurementPoint_Location(LOCATION)).thenReturn(measurementsOnlyKey);
-
-        List<TemperatureMeasurement> temperatureMeasurements = dataService.readMeasurements(null, null, LOCATION);
-        assertEquals("number of entries", 5, temperatureMeasurements.size());
-    }
 
     private TemperatureData createTemperatureData() {
         Metadata metadata = new Metadata(LOCATION);
         List<TemperatureMeasurement> measurements = new ArrayList<>();
-        TemperatureMeasurement measurement = new TemperatureMeasurement(12.0, SkyState.CLEAR, null);
+        TemperatureMeasurement measurement = new TemperatureMeasurement(12.0, 12, 960.0, SkyState.CLEAR, null);
         measurements.add(measurement);
         return new TemperatureData(metadata, measurements);
     }
@@ -196,11 +143,4 @@ class DataServiceImplMeasurementTests {
         return new TemperatureMeasurementPoint(LOCATION);
     }
 
-    private Measurement createMeasurement() {
-        Measurement measurement = new Measurement();
-        measurement.setTemperature(12.0);
-        measurement.setSky(SkyState.CLEAR);
-        measurement.setTimestamp(new Timestamp(System.currentTimeMillis()));
-        return measurement;
-    }
 }

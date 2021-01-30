@@ -45,18 +45,16 @@ class MeasurementPointIntegrationTests {
     @Autowired
     private MeasurementRepository measurementRepository;
 
-    private final String MEASUREMENT_POINT_1 ="TestLocation";
-    private final String MEASUREMENT_POINT_2 ="12345678";
+    private final String MEASUREMENT_POINT_1 = "TestLocation";
+    private final String MEASUREMENT_POINT_2 = "12345678";
 
     @BeforeEach
-    public void setUp()
-    {
+    public void setUp() {
         addTestValues();
     }
 
     @AfterEach
-    public void tearDown()
-    {
+    public void tearDown() {
         measurementRepository.deleteAll();
         measurementRepository.flush();
         temperatureMeasurementPointRepository.deleteAll();
@@ -120,8 +118,7 @@ class MeasurementPointIntegrationTests {
         assertEquals("number of temperature points", 2, points.size());
     }
 
-    private void addTestValues()
-    {
+    private void addTestValues() {
         List<Measurement> measurementList = new ArrayList<>();
         TemperatureMeasurementPoint point = new TemperatureMeasurementPoint(MEASUREMENT_POINT_1);
         TemperatureMeasurementPoint point2 = new TemperatureMeasurementPoint(MEASUREMENT_POINT_2);
@@ -129,11 +126,11 @@ class MeasurementPointIntegrationTests {
         temperatureMeasurementPointRepository.saveAndFlush(point);
         temperatureMeasurementPointRepository.saveAndFlush(point2);
 
-        measurementList.add(new Measurement(point,Timestamp.valueOf("2020-12-09 23:59:00.0"),12.0, SkyState.WINDY));
-        measurementList.add(new Measurement(point,Timestamp.valueOf("2020-11-09 23:59:00.0"),12.0, SkyState.WINDY));
-        measurementList.add(new Measurement(point,Timestamp.valueOf("2020-10-09 23:59:00.0"),12.0, SkyState.WINDY));
-        measurementList.add(new Measurement(point,Timestamp.valueOf("2020-09-09 23:59:00.0"),12.0, SkyState.WINDY));
-        measurementList.add(new Measurement(point,Timestamp.valueOf("2020-08-09 23:59:00.0"),12.0, SkyState.WINDY));
+        measurementList.add(new Measurement(point, Timestamp.valueOf("2020-12-09 23:59:00.0"), 12.0, 30, 960.20, SkyState.WINDY));
+        measurementList.add(new Measurement(point, Timestamp.valueOf("2020-11-09 23:59:00.0"), 12.0, 30, 960.20, SkyState.WINDY));
+        measurementList.add(new Measurement(point, Timestamp.valueOf("2020-10-09 23:59:00.0"), 12.0, 30, 960.20, SkyState.WINDY));
+        measurementList.add(new Measurement(point, Timestamp.valueOf("2020-09-09 23:59:00.0"), 12.0, 30, 960.20, SkyState.WINDY));
+        measurementList.add(new Measurement(point, Timestamp.valueOf("2020-08-09 23:59:00.0"), 12.0, 30, 960.20, SkyState.WINDY));
 
         measurementRepository.saveAll(measurementList);
         measurementRepository.flush();
