@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Value;
  * TODO -- read keys from downloadable file
  */
 public class CredentialPair implements AWSCredentials {
-    @Value("${default.key:})")
+    @Value("${default.accesskey:})")
     private String accessKey;
 
-    @Value("${default.key:})")
+    @Value("${default.secretkey:})")
     private String secretKey;
 
     public CredentialPair(String accessKey, String secretKey) {

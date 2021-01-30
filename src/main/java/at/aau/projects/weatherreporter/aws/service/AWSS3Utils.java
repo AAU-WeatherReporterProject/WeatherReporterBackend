@@ -45,8 +45,6 @@ public class AWSS3Utils {
     @Value("${default.region:eu-central-1})")
     private String region;
 
-
-
     public AWSS3Utils(){}
 
     public AWSS3Utils(String accessKey, String secretKey) {
@@ -71,10 +69,16 @@ public class AWSS3Utils {
 
     public void addTemperatureData(TemperatureData data) {
         // TODO
+        System.out.println("Adding content data to bucketfile.");
+
+
+
     }
 
     public List<TemperatureMeasurement> readMeasurements(String from, String to, String location) {
         // TODO
+        System.out.println("Reading measurements from " + from + " until " + to + " at " + location);
+
         return null;
     }
 

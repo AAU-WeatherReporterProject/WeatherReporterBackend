@@ -2,8 +2,11 @@ package at.aau.projects.weatherreporter.aws.model;
 
 import at.aau.projects.weatherreporter.aws.service.AWSS3Utils;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.amazonaws.services.s3.model.S3Object;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
+
+import java.util.ArrayList;
 
 
 @Getter
@@ -12,13 +15,13 @@ public class S3Bucket {
      * Bucket-URL
      * @implNote https://<bucket-name>.s3.amazonaws.com/<filename>
      */
-    @Value("${default.url:})")
+    @Value("${default.awsurl:})")
     private String awsUrl;
 
     /**
      * Bucketname for direct calls
      */
-    @Value("${default.name:})")
+    @Value("${default.bucketname:})")
     private String bucketName;
 
     public S3Bucket(String awsUrl, String bucketName) {
@@ -47,4 +50,5 @@ public class S3Bucket {
             e.printStackTrace();
         }
     }
+
 }
