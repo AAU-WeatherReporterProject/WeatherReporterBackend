@@ -21,8 +21,11 @@ import java.util.List;
 @RequestMapping("v1")
 public class RestEndpointController {
 
-    @Autowired
     private DataService dataService;
+
+    public RestEndpointController(@Autowired DataService dataService) {
+        this.dataService = dataService;
+    }
 
     @PostMapping(value = "/ingest")
     public void ingest(@RequestBody @Nonnull TemperatureData data) {
