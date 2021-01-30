@@ -58,13 +58,13 @@ public class DataServiceImpl implements DataService {
         }
         for (TemperatureMeasurement measurement : data.getMeasurements()) {
             if (measurement.getTemperature() == null || measurement.getTemperature() < -60 || measurement.getTemperature() > 100) {
-                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "invalid temperature value:"+measurement.getTemperature());
+                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "invalid temperature value:" + measurement.getTemperature());
             }
-            if (measurement.getHumidity() != null && ( measurement.getHumidity() < 0 || measurement.getHumidity() > 100)) {
-                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "invalid humidity value:"+measurement.getHumidity());
+            if (measurement.getHumidity() != null && (measurement.getHumidity() < 0 || measurement.getHumidity() > 100)) {
+                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "invalid humidity value:" + measurement.getHumidity());
             }
-            if (measurement.getPressure() != null && ( measurement.getPressure() < 800 || measurement.getPressure() > 1100)) {
-                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "invalid pressure value:"+measurement.getPressure());
+            if (measurement.getPressure() != null && (measurement.getPressure() < 800 || measurement.getPressure() > 1100)) {
+                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "invalid pressure value:" + measurement.getPressure());
             }
         }
     }
