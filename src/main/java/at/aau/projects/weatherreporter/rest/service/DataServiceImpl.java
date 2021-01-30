@@ -7,6 +7,7 @@ import at.aau.projects.weatherreporter.rest.model.TemperatureData;
 import at.aau.projects.weatherreporter.rest.model.TemperatureMeasurement;
 import at.aau.projects.weatherreporter.rest.repository.MeasurementRepository;
 import at.aau.projects.weatherreporter.rest.repository.TemperatureMeasurementPointRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -23,7 +24,7 @@ public class DataServiceImpl implements DataService {
     private final MeasurementRepository measurementRepository;
     private final TemperatureMeasurementPointRepository temperatureMeasurementPointRepository;
 
-    public DataServiceImpl(MeasurementRepository measurementRepository, TemperatureMeasurementPointRepository temperatureMeasurementPointRepository) {
+    public DataServiceImpl(@Autowired MeasurementRepository measurementRepository, @Autowired TemperatureMeasurementPointRepository temperatureMeasurementPointRepository) {
         this.measurementRepository = measurementRepository;
         this.temperatureMeasurementPointRepository = temperatureMeasurementPointRepository;
     }

@@ -1,5 +1,6 @@
 package at.aau.projects.weatherreporter.rest.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Getter
 @ToString
+@AllArgsConstructor
 public class TemperatureData {
 
     @Nullable
@@ -18,10 +20,5 @@ public class TemperatureData {
 
     public TemperatureData() {
         this(null, null);
-    }
-
-    public TemperatureData(@Nullable Metadata metadata, @Nullable List<TemperatureMeasurement> measurements) {
-        this.metadata = metadata;
-        this.measurements = measurements;
     }
 }
