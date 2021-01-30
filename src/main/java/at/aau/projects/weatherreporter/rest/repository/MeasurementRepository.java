@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface MeasurementRepository extends JpaRepository<Measurement, Long> {
 
-    List<Measurement> findAllByTemperatureMeasurementPoint_LocationAndTimestampBetween(String location, Timestamp from, Timestamp to);
+    List<Measurement> findAllByTemperatureMeasurementPointLocationAndTimestampBetween(String location, Timestamp from, Timestamp to);
 
-    List<Measurement> findAllByTemperatureMeasurementPoint_LocationAndTimestampBefore(String location, Timestamp to);
+    List<Measurement> findAllByTemperatureMeasurementPointLocationAndTimestampBefore(String location, Timestamp to);
 
-    List<Measurement> findAllByTemperatureMeasurementPoint_LocationAndTimestampAfter(String location, Timestamp from);
+    List<Measurement> findAllByTemperatureMeasurementPointLocationAndTimestampAfter(String location, Timestamp from);
 
-    List<Measurement> findAllByTemperatureMeasurementPoint_Location(String location);
+    List<Measurement> findAllByTemperatureMeasurementPointLocation(String location);
 }
 
 
