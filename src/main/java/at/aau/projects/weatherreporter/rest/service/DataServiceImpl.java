@@ -7,6 +7,7 @@ import at.aau.projects.weatherreporter.rest.model.TemperatureData;
 import at.aau.projects.weatherreporter.rest.model.TemperatureMeasurement;
 import at.aau.projects.weatherreporter.rest.repository.MeasurementRepository;
 import at.aau.projects.weatherreporter.rest.repository.TemperatureMeasurementPointRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -23,7 +24,7 @@ public class DataServiceImpl implements DataService {
     private final MeasurementRepository measurementRepository;
     private final TemperatureMeasurementPointRepository temperatureMeasurementPointRepository;
 
-    public DataServiceImpl(MeasurementRepository measurementRepository, TemperatureMeasurementPointRepository temperatureMeasurementPointRepository) {
+    public DataServiceImpl(@Autowired MeasurementRepository measurementRepository, @Autowired TemperatureMeasurementPointRepository temperatureMeasurementPointRepository) {
         this.measurementRepository = measurementRepository;
         this.temperatureMeasurementPointRepository = temperatureMeasurementPointRepository;
     }
@@ -79,13 +80,13 @@ public class DataServiceImpl implements DataService {
         Timestamp timestampFrom = from != null ? Timestamp.valueOf(from) : null;
         Timestamp timestampTo = to != null ? Timestamp.valueOf(to) : null;
         if (timestampFrom != null && timestampTo != null) {
-            measurements = measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampBetween(location, timestampFrom, timestampTo);
+            measurements = measurementRepository.findAllByTemperatureMeasurementPointLocationAndTimestampBetween(location, timestampFrom, timestampTo);
         } else if (timestampFrom != null) {
-            measurements = measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampAfter(location, timestampFrom);
+            measurements = measurementRepository.findAllByTemperatureMeasurementPointLocationAndTimestampAfter(location, timestampFrom);
         } else if (timestampTo != null) {
-            measurements = measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampBefore(location, timestampTo);
+            measurements = measurementRepository.findAllByTemperatureMeasurementPointLocationAndTimestampBefore(location, timestampTo);
         } else {
-            measurements = measurementRepository.findAllByTemperatureMeasurementPoint_Location(location);
+            measurements = measurementRepository.findAllByTemperatureMeasurementPointLocation(location);
         }
 
         measurements.sort(Comparator.comparing(Measurement::getTimestamp).reversed());

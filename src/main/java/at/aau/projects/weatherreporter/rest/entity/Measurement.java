@@ -1,7 +1,9 @@
 package at.aau.projects.weatherreporter.rest.entity;
 
 import at.aau.projects.weatherreporter.rest.model.SkyState;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
@@ -16,6 +18,7 @@ import java.sql.Timestamp;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "Measurement")
 public class Measurement {
@@ -31,9 +34,6 @@ public class Measurement {
     private Integer humidity;
     private Double pressure;
     private SkyState sky;
-
-    public Measurement() {
-    }
 
     public Measurement(TemperatureMeasurementPoint point, Timestamp timestamp, Double temperature, Integer humidity, Double pressure, SkyState skyState) {
         this.temperatureMeasurementPoint = point;
