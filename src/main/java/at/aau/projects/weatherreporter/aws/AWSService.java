@@ -6,13 +6,10 @@ import at.aau.projects.weatherreporter.rest.model.MeasurementPoint;
 import at.aau.projects.weatherreporter.rest.model.TemperatureData;
 import at.aau.projects.weatherreporter.rest.model.TemperatureMeasurement;
 
-import at.aau.projects.weatherreporter.rest.service.DataService;
-import at.aau.projects.weatherreporter.aws.service.AWSS3Utils;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +48,6 @@ public class AWSService{
 
     /**
      * Region specifying where bucket will be created
-     * @see Region
      */
     @Value("${default.region:eu-central-1})")
     private String region;
