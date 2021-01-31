@@ -53,7 +53,7 @@ class DataServiceImplReadMeasurementTests {
         List<Measurement> measurementsKeyTo = new ArrayList<>();
         for (int i = 0; i < 4; i++)
             measurementsKeyTo.add(createMeasurement());
-        when(measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampBefore(anyString(), any(Timestamp.class)))
+        when(measurementRepository.findAllByTemperatureMeasurementPointLocationAndTimestampBefore(anyString(), any(Timestamp.class)))
                 .thenReturn(measurementsKeyTo);
 
         List<TemperatureMeasurement> temperatureMeasurements = dataService.readMeasurements(null, "2020-12-09 23:59:00", LOCATION);
@@ -65,7 +65,7 @@ class DataServiceImplReadMeasurementTests {
         List<Measurement> measurementsKeyFrom = new ArrayList<>();
         for (int i = 0; i < 2; i++)
             measurementsKeyFrom.add(createMeasurement());
-        when(measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampAfter(anyString(), any(Timestamp.class)))
+        when(measurementRepository.findAllByTemperatureMeasurementPointLocationAndTimestampAfter(anyString(), any(Timestamp.class)))
                 .thenReturn(measurementsKeyFrom);
 
         List<TemperatureMeasurement> temperatureMeasurements = dataService.readMeasurements("2020-12-09 23:59:00", null, LOCATION);
@@ -77,7 +77,7 @@ class DataServiceImplReadMeasurementTests {
         List<Measurement> measurementsKeyToFrom = new ArrayList<>();
         for (int i = 0; i < 1; i++)
             measurementsKeyToFrom.add(createMeasurement());
-        when(measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampBetween(anyString(), any(Timestamp.class), any(Timestamp.class)))
+        when(measurementRepository.findAllByTemperatureMeasurementPointLocationAndTimestampBetween(anyString(), any(Timestamp.class), any(Timestamp.class)))
                 .thenReturn(measurementsKeyToFrom);
 
         List<TemperatureMeasurement> temperatureMeasurements = dataService.readMeasurements("2020-12-09 23:59:00", "2020-12-09 23:59:00", LOCATION);
@@ -89,7 +89,7 @@ class DataServiceImplReadMeasurementTests {
         List<Measurement> measurementsOnlyKey = new ArrayList<>();
         for (int i = 0; i < 5; i++)
             measurementsOnlyKey.add(createMeasurement());
-        when(measurementRepository.findAllByTemperatureMeasurementPoint_Location(LOCATION)).thenReturn(measurementsOnlyKey);
+        when(measurementRepository.findAllByTemperatureMeasurementPointLocation(LOCATION)).thenReturn(measurementsOnlyKey);
 
         List<TemperatureMeasurement> temperatureMeasurements = dataService.readMeasurements(null, null, LOCATION);
         assertEquals("number of entries", 5, temperatureMeasurements.size());
