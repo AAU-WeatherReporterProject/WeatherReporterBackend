@@ -32,22 +32,38 @@ public class DataServiceImpl implements DataService {
     @Override
     public void ingestData(TemperatureData data) {
         List<Measurement> measurementList = new ArrayList<>();
-        if (!temperatureMeasurementPointRepository.existsById(data.getMetadata().getKey())) {
-            addMeasurementPoint(new MeasurementPoint(data.getMetadata().getKey()));
-        }
+        addMeasurementPointIfNotExists(data.getMetadata().getKey());
         for (TemperatureMeasurement inputMeasurement : data.getMeasurements()) {
-            Measurement measurement = new Measurement();
-            measurement.setTemperatureMeasurementPoint(new TemperatureMeasurementPoint(data.getMetadata().getKey()));
-            measurement.setTemperature(inputMeasurement.getTemperature());
-            measurement.setSky(inputMeasurement.getSkyState());
-            measurement.setHumidity(inputMeasurement.getHumidity());
-            measurement.setPressure(inputMeasurement.getPressure());
-            measurement.setTimestamp(new Timestamp(System.currentTimeMillis()));
-            measurementList.add(measurement);
+            if (inputMeasurement != null) {
+                measurementList.add(fillMeasurementFromTemperatureMeasurement(inputMeasurement, data.getMetadata().getKey()));
+            }
         }
         measurementRepository.saveAll(measurementList);
-
     }
+
+    /**
+     * if there exists no measurement point for the given location
+     * add one.
+     *
+     * @param location primary key for measurement point
+     */
+    private void addMeasurementPointIfNotExists(String location) {
+        if (!temperatureMeasurementPointRepository.existsById(location)) {
+            addMeasurementPoint(new MeasurementPoint(location));
+        }
+    }
+
+    private Measurement fillMeasurementFromTemperatureMeasurement(TemperatureMeasurement temperatureMeasurement, String location) {
+        Measurement measurement = new Measurement();
+        measurement.setTemperatureMeasurementPoint(new TemperatureMeasurementPoint(location));
+        measurement.setTemperature(temperatureMeasurement.getTemperature());
+        measurement.setSky(temperatureMeasurement.getSkyState());
+        measurement.setHumidity(temperatureMeasurement.getHumidity());
+        measurement.setPressure(temperatureMeasurement.getPressure());
+        measurement.setTimestamp(new Timestamp(System.currentTimeMillis()));
+        return measurement;
+    }
+
 
     @Override
     public List<TemperatureMeasurement> readMeasurements(String from, String to, String location) {
