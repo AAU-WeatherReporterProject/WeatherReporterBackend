@@ -25,6 +25,7 @@ public class TemperatureMeasurementPoint {
             cascade = CascadeType.DETACH,
             fetch = FetchType.LAZY
     )
+
     private Set<Measurement> measurements;
 
     public TemperatureMeasurementPoint() {
