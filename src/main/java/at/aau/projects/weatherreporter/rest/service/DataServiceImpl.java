@@ -32,7 +32,6 @@ public class DataServiceImpl implements DataService {
     @Override
     public void ingestData(TemperatureData data) {
         List<Measurement> measurementList = new ArrayList<>();
-        validateTemperatureData(data);
         if (!temperatureMeasurementPointRepository.existsById(data.getMetadata().getKey())) {
             addMeasurementPoint(new MeasurementPoint(data.getMetadata().getKey()));
         }
@@ -48,26 +47,6 @@ public class DataServiceImpl implements DataService {
         }
         measurementRepository.saveAll(measurementList);
 
-    }
-
-    protected void validateTemperatureData(TemperatureData data) {
-        if (data == null || data.getMetadata() == null || data.getMetadata().getKey() == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing mandatory values");
-        }
-        if (data.getMeasurements() == null || data.getMeasurements().isEmpty()) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "No Measurements given to add");
-        }
-        for (TemperatureMeasurement measurement : data.getMeasurements()) {
-            if (measurement.getTemperature() == null || measurement.getTemperature() < -60 || measurement.getTemperature() > 100) {
-                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "invalid temperature value:" + measurement.getTemperature());
-            }
-            if (measurement.getHumidity() != null && (measurement.getHumidity() < 0 || measurement.getHumidity() > 100)) {
-                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "invalid humidity value:" + measurement.getHumidity());
-            }
-            if (measurement.getPressure() != null && (measurement.getPressure() < 800 || measurement.getPressure() > 1100)) {
-                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "invalid pressure value:" + measurement.getPressure());
-            }
-        }
     }
 
     @Override

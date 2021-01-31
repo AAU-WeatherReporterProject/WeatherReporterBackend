@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 
 import javax.annotation.Nonnull;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -28,7 +29,7 @@ public class RestEndpointController {
     }
 
     @PostMapping(value = "/ingest")
-    public void ingest(@RequestBody @Nonnull TemperatureData data) {
+    public void ingest(@RequestBody @Valid TemperatureData data) {
         dataService.ingestData(data);
     }
 
