@@ -1,28 +1,25 @@
-package at.aau.projects.weatherreporter.aws.service;
+package at.aau.projects.weatherreporter.rest.service;
 
 import at.aau.projects.weatherreporter.rest.model.MeasurementPoint;
 import at.aau.projects.weatherreporter.rest.model.TemperatureData;
 import at.aau.projects.weatherreporter.rest.model.TemperatureMeasurement;
-import at.aau.projects.weatherreporter.rest.service.DataService;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-public class S3Filemanager implements DataService {
+/**
+ * Implementation to use S3
+ */
+@Service("DataService")
+@Profile("S3Bucket")
+public class S3Service implements DataService {
 
-    /**
-     * Fetches file, updates temperature data record, reload to AWS
-     * @param data
-     */
     @Override
     public void ingestData(TemperatureData data) {
 
     }
 
-
-    /**
-     * Fetches measurements from
-     * @param data
-     */
     @Override
     public List<TemperatureMeasurement> readMeasurements(String from, String to, String location) {
         return null;

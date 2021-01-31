@@ -1,9 +1,12 @@
-package at.aau.projects.weatherreporter.aws.model;
+package at.aau.projects.weatherreporter.rest.aws;
+
+import org.springframework.context.annotation.Profile;
 
 /**
  * For setting the region of AWSClients
  * @see https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html
  */
+@Profile({"DynamoDB", "S3Bucket"})
 public enum Region {
     NORTH_VIRGINIA("us-east-1"),
     NORTH_CALIFORNIA("us-west-1"),

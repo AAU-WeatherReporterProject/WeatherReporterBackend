@@ -1,24 +1,22 @@
-package at.aau.projects.weatherreporter.aws.model;
+package at.aau.projects.weatherreporter.rest.aws;
 
-import at.aau.projects.weatherreporter.aws.AWSService;
-import at.aau.projects.weatherreporter.rest.model.TemperatureData;
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 
 import java.io.File;
 
 
 @Getter
 @Setter
+@Profile("S3Bucket")
 /**
  * @Deprecated - Simple Setup for creating/deleting buckets and uploading/downloading files
+ * TODO -- Refactor to fit s3 implementation
  */
 public class S3Bucket {
     /**
@@ -39,7 +37,7 @@ public class S3Bucket {
      */
     public void createBucket() {
         try {
-            AWSService.amazonS3.createBucket(bucketName);
+            //AWSService.amazonS3.createBucket(bucketName);
             System.out.println("Successfully created " + bucketName );
         }catch(AmazonS3Exception e) {
             e.printStackTrace();
@@ -50,7 +48,7 @@ public class S3Bucket {
      */
     public void deleteBucket() {
         try {
-            AWSService.amazonS3.deleteBucket(bucketName);
+            //AWSService.amazonS3.deleteBucket(bucketName);
             System.out.println("Successfully deleted " + bucketName);
         }catch(AmazonS3Exception e) {
             e.printStackTrace();
@@ -59,7 +57,7 @@ public class S3Bucket {
 
     public void createFile(){
         try {
-            AWSService.amazonS3.deleteObject(bucketName, bucketFilename);
+            //AWSService.amazonS3.deleteObject(bucketName, bucketFilename);
             System.out.println("Deleted File " + bucketName + "/" + bucketFilename);
         }catch(AmazonServiceException e) {
             e.printStackTrace();
@@ -69,7 +67,7 @@ public class S3Bucket {
 
     public void deleteFile(){
         try {
-            AWSService.amazonS3.deleteObject(bucketName, bucketFilename);
+            //AWSService.amazonS3.deleteObject(bucketName, bucketFilename);
             System.out.println("Deleted File " + bucketName + "/" + bucketFilename);
         }catch(AmazonServiceException e) {
             e.printStackTrace();
@@ -78,7 +76,7 @@ public class S3Bucket {
 
     public File downloadFile(){
         File downloadFile = new File("TmpDownload.json");
-        ObjectMetadata object = AWSService.amazonS3.getObject(new GetObjectRequest(bucketName, bucketFilename), downloadFile);
+        //ObjectMetadata object = AWSService.amazonS3.getObject(new GetObjectRequest(bucketName, bucketFilename), downloadFile);
         if(downloadFile.exists() && downloadFile.canRead()){
             return downloadFile;
         }else{
@@ -94,7 +92,8 @@ public class S3Bucket {
         //metadata.setContentType("application/json");
         //metadata.addUserMetadata("title", "myfiletitle");
         //request.setMetadata(metadata);
-        AWSService.amazonS3.putObject(request);
+
+        //AWSService.amazonS3.putObject(request);
     }
 
     /**

@@ -42,6 +42,7 @@ dependencies {
     // Amazon AWS-Dependency -- DO NOT CHANGE VERSION
     implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.465')
     implementation 'com.amazonaws:aws-java-sdk-s3'
+    implementation 'com.amazonaws:aws-java-sdk-dynamodb'
 
     runtimeOnly 'com.h2database:h2'
 }

@@ -47,7 +47,6 @@ public class DataServiceImpl implements DataService {
             measurementList.add(measurement);
         }
         measurementRepository.saveAll(measurementList);
-
     }
 
     protected void validateTemperatureData(TemperatureData data) {
