@@ -8,6 +8,7 @@ import at.aau.projects.weatherreporter.rest.model.TemperatureMeasurement;
 import at.aau.projects.weatherreporter.rest.repository.MeasurementRepository;
 import at.aau.projects.weatherreporter.rest.repository.TemperatureMeasurementPointRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service("DataService")
+@Profile("REST")
 public class DataServiceImpl implements DataService {
 
     private final MeasurementRepository measurementRepository;

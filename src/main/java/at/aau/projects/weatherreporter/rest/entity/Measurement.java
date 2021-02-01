@@ -1,6 +1,7 @@
 package at.aau.projects.weatherreporter.rest.entity;
 
 import at.aau.projects.weatherreporter.rest.model.SkyState;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Entity
 @Table(name = "Measurement")
+@DynamoDBTable(tableName = "Measurement")
 public class Measurement {
 
     @Id

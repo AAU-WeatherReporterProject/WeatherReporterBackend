@@ -1,5 +1,6 @@
 package at.aau.projects.weatherreporter.rest.entity;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +19,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "Temperature_Measurement_Point")
+@DynamoDBTable(tableName = "Temperature_Measurement_Point")
 public class TemperatureMeasurementPoint {
 
     @Id
