@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.util.AssertionErrors.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -154,11 +155,49 @@ class MeasurementIngestIntegrationTests {
     }
 
     @Test
-    void ingestData_skystate_null() throws Exception {
-        TemperatureData temperatureData = createTemperatureData(60.0, 50, 1200.0, null, MEASUREMENT_POINT_1);
+    void ingestData_skyState_null() throws Exception {
+        TemperatureData temperatureData = createTemperatureData(60.0, 50, 900.0, null, MEASUREMENT_POINT_1);
         performDataIngest(mapToJson(temperatureData))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errors", hasItem("pressure must be smaller or equal 1100")));
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void ingestData_invalid_skyState() throws Exception {
+        TemperatureData temperatureData = createTemperatureData(60.0, 50, 900.0, null, MEASUREMENT_POINT_1);
+        String content = mapToJson(temperatureData);
+        content = content.replace("\"skyState\":null", "\"skyState\":\"20\"");
+        performDataIngest(content)
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void ingestData() throws Exception {
+        TemperatureData temperatureData = createTemperatureData(30.0, 50, 900.0, SkyState.CLEAR, MEASUREMENT_POINT_1);
+        performDataIngest(mapToJson(temperatureData))
+                .andExpect(status().isOk());
+        List<Measurement> measurements = measurementRepository.findAllByTemperatureMeasurementPointLocation(MEASUREMENT_POINT_1);
+        assertEquals("number of measurements", 1, measurements.size());
+        assertEquals("temperature", 30.0,measurements.get(0).getTemperature());
+        assertEquals("humidity", 50, measurements.get(0).getHumidity());
+        assertEquals("pressure", 900.0, measurements.get(0).getPressure());
+        assertEquals("skyState", SkyState.CLEAR, measurements.get(0).getSky());
+    }
+
+    @Test
+    void ingestData_new_measurement_point() throws Exception {
+        TemperatureData temperatureData = createTemperatureData(30.0, 50, 900.0, SkyState.CLEAR, MEASUREMENT_POINT_2);
+        performDataIngest(mapToJson(temperatureData))
+                .andExpect(status().isOk());
+        List<Measurement> measurements = measurementRepository.findAllByTemperatureMeasurementPointLocation(MEASUREMENT_POINT_2);
+        List<TemperatureMeasurementPoint> points = temperatureMeasurementPointRepository.findAll();
+
+        assertEquals("number of measurements", 1, measurements.size());
+        assertEquals("temperature", 30.0,measurements.get(0).getTemperature());
+        assertEquals("humidity", 50, measurements.get(0).getHumidity());
+        assertEquals("pressure", 900.0, measurements.get(0).getPressure());
+        assertEquals("skyState", SkyState.CLEAR, measurements.get(0).getSky());
+
+        assertEquals("number of measurement points", 2, points.size());
     }
 
     private ResultActions performDataIngest(String content) throws Exception {

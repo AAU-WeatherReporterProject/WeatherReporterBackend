@@ -30,7 +30,6 @@ public class TemperatureMeasurement {
     @Max(value = 1100, message = "pressure must be smaller or equal {value}")
     private final Double pressure;
     @Nullable
-
     private final SkyState skyState;
     @Nullable
     private final String timestamp;
