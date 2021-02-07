@@ -22,9 +22,11 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.util.AssertionErrors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -56,23 +58,63 @@ class ReadMeasurementIntegrationTests {
     }
 
     @Test
-    void getMeasurementPoints() throws Exception {
-        this.mvc.perform(get("/v1/measurementPoints"))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(2));
+    void getMeasurements_no_key() throws Exception {
+        this.mvc.perform(get("/v1/dataPoints"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("Required String parameter 'key' is not present"));
     }
 
     @Test
-    void addMeasurementPoints() throws Exception {
-        this.mvc.perform(post("/v1/measurementPoint").contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(mapToJson(new MeasurementPoint("test2323"))))
-                .andExpect(status().isOk());
+    void getMeasurements() throws Exception {
+        this.mvc.perform(get("/v1/dataPoints")
+                .param("key", MEASUREMENT_POINT_1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(5));
+    }
 
-        List<TemperatureMeasurementPoint> points = temperatureMeasurementPointRepository.findAll();
-        assertNotNull("temperature points", points);
-        assertEquals("number of temperature points", 3, points.size());
-        assertTrue("contains temperature point 'test2323' ", points.stream().anyMatch(point -> "test2323".equals(point.getLocation())));
+    @Test
+    void getMeasurements_with_from() throws Exception {
+        this.mvc.perform(get("/v1/dataPoints")
+                .param("key", MEASUREMENT_POINT_1)
+                .param("from", "2020-10-08 23:59:00"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(3));
+    }
+
+    @Test
+    void getMeasurements_with_to() throws Exception {
+        this.mvc.perform(get("/v1/dataPoints")
+                .param("key", MEASUREMENT_POINT_1)
+                .param("to", "2020-10-08 23:59:00"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(2));
+    }
+
+    @Test
+    void getMeasurements_with_from_and_to() throws Exception {
+        this.mvc.perform(get("/v1/dataPoints")
+                .param("key", MEASUREMENT_POINT_1)
+                .param("from", "2020-09-08 23:59:00")
+                .param("to", "2020-12-08 23:59:00"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(3));
+    }
+
+    @Test
+    void getMeasurements_from_wrong_format() throws Exception {
+        this.mvc.perform(get("/v1/dataPoints")
+                .param("key", MEASUREMENT_POINT_1)
+                .param("from", "2020-09-08 :00"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("Timestamp format must be yyyy-mm-dd hh:mm:ss[.fffffffff]"));
+    }
+    @Test
+    void getMeasurements_to_wrong_format() throws Exception {
+        this.mvc.perform(get("/v1/dataPoints")
+                .param("key", MEASUREMENT_POINT_1)
+                .param("to", "2020-09-08 :00"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("Timestamp format must be yyyy-mm-dd hh:mm:ss[.fffffffff]"));
     }
 
 
