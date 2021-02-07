@@ -57,6 +57,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(body, headers, status);
     }
+
     @ExceptionHandler(IllegalArgumentException.class)
     protected ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex) {
         Map<String, Object> body = new LinkedHashMap<>();
@@ -64,8 +65,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         body.put("status", HttpStatus.BAD_REQUEST);
         body.put("error", ex.getMessage());
 
-        return new ResponseEntity<>(body,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
-
-
 }
