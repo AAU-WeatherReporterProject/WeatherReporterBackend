@@ -1,7 +1,6 @@
 package at.aau.projects.weatherreporter.rest.entity;
 
 import at.aau.projects.weatherreporter.rest.model.SkyState;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
