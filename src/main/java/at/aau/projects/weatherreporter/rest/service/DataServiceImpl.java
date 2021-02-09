@@ -2,6 +2,7 @@ package at.aau.projects.weatherreporter.rest.service;
 
 import at.aau.projects.weatherreporter.rest.entity.Measurement;
 import at.aau.projects.weatherreporter.rest.entity.TemperatureMeasurementPoint;
+import at.aau.projects.weatherreporter.rest.exception.ValidationException;
 import at.aau.projects.weatherreporter.rest.model.MeasurementPoint;
 import at.aau.projects.weatherreporter.rest.model.TemperatureData;
 import at.aau.projects.weatherreporter.rest.model.TemperatureMeasurement;
@@ -29,13 +30,14 @@ public class DataServiceImpl implements DataService {
         this.temperatureMeasurementPointRepository = temperatureMeasurementPointRepository;
     }
 
+
     @Override
-    public void ingestData(TemperatureData data) {
+    public void ingestData(TemperatureData data) throws ValidationException {
         List<Measurement> measurementList = new ArrayList<>();
         addMeasurementPointIfNotExists(data.getMetadata().getKey());
         for (TemperatureMeasurement inputMeasurement : data.getMeasurements()) {
             if (inputMeasurement != null) {
-                measurementList.add(fillMeasurementFromTemperatureMeasurement(inputMeasurement, data.getMetadata().getKey()));
+                measurementList.add(convertToMeasurementObject(inputMeasurement, data.getMetadata().getKey()));
             }
         }
         measurementRepository.saveAll(measurementList);
@@ -47,13 +49,20 @@ public class DataServiceImpl implements DataService {
      *
      * @param location primary key for measurement point
      */
-    private void addMeasurementPointIfNotExists(String location) {
+    private void addMeasurementPointIfNotExists(String location) throws ValidationException {
         if (!temperatureMeasurementPointRepository.existsById(location)) {
             addMeasurementPoint(new MeasurementPoint(location));
         }
     }
 
-    private Measurement fillMeasurementFromTemperatureMeasurement(TemperatureMeasurement temperatureMeasurement, String location) {
+    /**
+     * converts the given temperature measurement object to a measurement object.
+     *
+     * @param temperatureMeasurement given temperature object
+     * @param location               location of temperature measurement
+     * @return measurement object
+     */
+    private Measurement convertToMeasurementObject(TemperatureMeasurement temperatureMeasurement, String location) {
         Measurement measurement = new Measurement();
         measurement.setTemperatureMeasurementPoint(new TemperatureMeasurementPoint(location));
         measurement.setTemperature(temperatureMeasurement.getTemperature());
@@ -66,11 +75,11 @@ public class DataServiceImpl implements DataService {
 
 
     @Override
-    public List<TemperatureMeasurement> readMeasurements(String from, String to, String location) {
+    public List<TemperatureMeasurement> readMeasurements(String from, String to, String location) throws ValidationException {
         List<TemperatureMeasurement> temperatureMeasurements = new ArrayList<>();
         List<Measurement> measurements;
         if (location == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "No Location given");
+            throw new ValidationException("No Location given");
         }
         Timestamp timestampFrom = from != null ? Timestamp.valueOf(from) : null;
         Timestamp timestampTo = to != null ? Timestamp.valueOf(to) : null;
@@ -92,19 +101,21 @@ public class DataServiceImpl implements DataService {
         return temperatureMeasurements;
     }
 
+
     @Override
-    public void addMeasurementPoint(MeasurementPoint measurementPoint) {
+    public void addMeasurementPoint(MeasurementPoint measurementPoint) throws ValidationException {
         if (measurementPoint == null || measurementPoint.getLocation() == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "No Measurement Point Location given");
+            throw new ValidationException("No Measurement Point Location given");
         }
 
         if (temperatureMeasurementPointRepository.existsById(measurementPoint.getLocation())) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Measurement Point already exists");
+            throw new ValidationException("Measurement Point already exists");
         }
         TemperatureMeasurementPoint point = new TemperatureMeasurementPoint();
         point.setLocation(measurementPoint.getLocation());
         temperatureMeasurementPointRepository.saveAndFlush(point);
     }
+
 
     @Override
     public List<MeasurementPoint> getAllMeasurementPoints() {

@@ -1,18 +1,20 @@
 package at.aau.projects.weatherreporter.rest;
 
+import at.aau.projects.weatherreporter.rest.exception.ValidationException;
 import at.aau.projects.weatherreporter.rest.model.MeasurementPoint;
 import at.aau.projects.weatherreporter.rest.model.TemperatureData;
 import at.aau.projects.weatherreporter.rest.model.TemperatureMeasurement;
 import at.aau.projects.weatherreporter.rest.service.DataService;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
-
 
 import javax.annotation.Nonnull;
 import javax.validation.Valid;
@@ -29,24 +31,27 @@ public class RestEndpointController {
     }
 
     @PostMapping(value = "/ingest")
-    public void ingest(@RequestBody @Valid TemperatureData data) {
+    public void ingestData(@RequestBody @Valid TemperatureData data) throws ValidationException {
         dataService.ingestData(data);
     }
 
     @PostMapping(value = "/measurementPoint")
-    public ResponseEntity<String> addMeasurementPoint(@RequestBody @Nonnull MeasurementPoint measurementPoint) {
+    public ResponseEntity<String> addMeasurementPoint(@RequestBody @Nonnull MeasurementPoint measurementPoint) throws ValidationException {
         dataService.addMeasurementPoint(measurementPoint);
         return ResponseEntity.ok("Measurement Point was successfully created!");
     }
 
     @GetMapping(value = "/measurementPoints")
-    public List<MeasurementPoint> getMeasurementPoints() {
+    public List<MeasurementPoint> getAllMeasurementPoints() {
         return dataService.getAllMeasurementPoints();
     }
 
     @GetMapping(value = "/dataPoints")
-    public List<TemperatureMeasurement> getDataPoints(
-            @Param("from") String from, @Param("to") String to, @Param("key") String key) {
+    @Validated
+    public List<TemperatureMeasurement> readMeasurements(
+            @RequestParam(value = "from", required = false) @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm") String from,
+            @RequestParam(value = "to", required = false) @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm") String to,
+            @RequestParam(value = "key") String key) throws ValidationException {
         return dataService.readMeasurements(from, to, key);
     }
 }
