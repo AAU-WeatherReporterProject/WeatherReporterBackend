@@ -92,7 +92,7 @@ class MeasurementPointIntegrationTests {
                 .accept(MediaType.APPLICATION_JSON)
                 .content("{}"))
                 .andExpect(status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().string("400 No Measurement Point Location given"));
+                .andExpect(MockMvcResultMatchers.content().string("No Measurement Point Location given"));
 
         List<TemperatureMeasurementPoint> points = temperatureMeasurementPointRepository.findAll();
         assertNotNull("temperature points", points);
@@ -105,7 +105,7 @@ class MeasurementPointIntegrationTests {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(mapToJson(new MeasurementPoint(MEASUREMENT_POINT_1))))
                 .andExpect(status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().string("400 Measurement Point already exists"));
+                .andExpect(MockMvcResultMatchers.content().string("Measurement Point already exists"));
 
         List<TemperatureMeasurementPoint> points = temperatureMeasurementPointRepository.findAll();
         assertNotNull("temperature points", points);

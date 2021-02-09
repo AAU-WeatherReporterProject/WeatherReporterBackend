@@ -1,6 +1,7 @@
 package at.aau.projects.weatherreporter.unittests;
 
 import at.aau.projects.weatherreporter.rest.entity.Measurement;
+import at.aau.projects.weatherreporter.rest.exception.ValidationException;
 import at.aau.projects.weatherreporter.rest.model.SkyState;
 import at.aau.projects.weatherreporter.rest.model.TemperatureMeasurement;
 import at.aau.projects.weatherreporter.rest.repository.MeasurementRepository;
@@ -43,13 +44,12 @@ class DataServiceImplReadMeasurementTests {
 
     @Test
     void test_read_measurements_key_null() {
-        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> dataService.readMeasurements(null, null, null));
-        assertEquals("http status", exception.getStatusCode(), HttpStatus.BAD_REQUEST);
-        assertEquals("exception text", "400 No Location given", exception.getMessage());
+        ValidationException exception = assertThrows(ValidationException.class, () -> dataService.readMeasurements(null, null, null));
+        assertEquals("exception text", "No Location given", exception.getMessage());
     }
 
     @Test
-    void test_read_measurements_to_null() {
+    void test_read_measurements_to_null() throws ValidationException {
         List<Measurement> measurementsKeyTo = new ArrayList<>();
         for (int i = 0; i < 4; i++)
             measurementsKeyTo.add(createMeasurement());
@@ -61,7 +61,7 @@ class DataServiceImplReadMeasurementTests {
     }
 
     @Test
-    void test_read_measurements_from_null() {
+    void test_read_measurements_from_null() throws ValidationException {
         List<Measurement> measurementsKeyFrom = new ArrayList<>();
         for (int i = 0; i < 2; i++)
             measurementsKeyFrom.add(createMeasurement());
@@ -73,7 +73,7 @@ class DataServiceImplReadMeasurementTests {
     }
 
     @Test
-    void test_read_measurements_with_to_from() {
+    void test_read_measurements_with_to_from() throws ValidationException {
         List<Measurement> measurementsKeyToFrom = new ArrayList<>();
         for (int i = 0; i < 1; i++)
             measurementsKeyToFrom.add(createMeasurement());
@@ -85,7 +85,7 @@ class DataServiceImplReadMeasurementTests {
     }
 
     @Test
-    void test_read_measurements_only_key() {
+    void test_read_measurements_only_key() throws ValidationException {
         List<Measurement> measurementsOnlyKey = new ArrayList<>();
         for (int i = 0; i < 5; i++)
             measurementsOnlyKey.add(createMeasurement());

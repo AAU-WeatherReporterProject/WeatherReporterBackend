@@ -1,5 +1,6 @@
 package at.aau.projects.weatherreporter.rest;
 
+import at.aau.projects.weatherreporter.rest.exception.ValidationException;
 import at.aau.projects.weatherreporter.rest.model.MeasurementPoint;
 import at.aau.projects.weatherreporter.rest.model.TemperatureData;
 import at.aau.projects.weatherreporter.rest.model.TemperatureMeasurement;
@@ -30,12 +31,12 @@ public class RestEndpointController {
     }
 
     @PostMapping(value = "/ingest")
-    public void ingestData(@RequestBody @Valid TemperatureData data) {
+    public void ingestData(@RequestBody @Valid TemperatureData data) throws ValidationException {
         dataService.ingestData(data);
     }
 
     @PostMapping(value = "/measurementPoint")
-    public ResponseEntity<String> addMeasurementPoint(@RequestBody @Nonnull MeasurementPoint measurementPoint) {
+    public ResponseEntity<String> addMeasurementPoint(@RequestBody @Nonnull MeasurementPoint measurementPoint) throws ValidationException {
         dataService.addMeasurementPoint(measurementPoint);
         return ResponseEntity.ok("Measurement Point was successfully created!");
     }
@@ -50,7 +51,7 @@ public class RestEndpointController {
     public List<TemperatureMeasurement> readMeasurements(
             @RequestParam(value = "from", required = false) @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm") String from,
             @RequestParam(value = "to", required = false) @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm") String to,
-            @RequestParam(value = "key") String key) {
+            @RequestParam(value = "key") String key) throws ValidationException {
         return dataService.readMeasurements(from, to, key);
     }
 }

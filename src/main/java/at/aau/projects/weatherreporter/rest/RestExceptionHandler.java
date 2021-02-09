@@ -1,5 +1,6 @@
 package at.aau.projects.weatherreporter.rest;
 
+import at.aau.projects.weatherreporter.rest.exception.ValidationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -24,9 +25,9 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(HttpClientErrorException.class)
-    protected ResponseEntity<Object> handleServiceValidationException(HttpClientErrorException ex) {
-        return ResponseEntity.status(ex.getStatusCode()).body(ex.getLocalizedMessage());
+    @ExceptionHandler(ValidationException.class)
+    protected ResponseEntity<Object> handleValidationException(ValidationException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getLocalizedMessage());
     }
 
     // error handle for @Valid

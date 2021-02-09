@@ -2,6 +2,7 @@ package at.aau.projects.weatherreporter.unittests;
 
 import at.aau.projects.weatherreporter.rest.entity.Measurement;
 import at.aau.projects.weatherreporter.rest.entity.TemperatureMeasurementPoint;
+import at.aau.projects.weatherreporter.rest.exception.ValidationException;
 import at.aau.projects.weatherreporter.rest.model.Metadata;
 import at.aau.projects.weatherreporter.rest.model.SkyState;
 import at.aau.projects.weatherreporter.rest.model.TemperatureData;
@@ -46,7 +47,7 @@ class DataServiceImplIngestMeasurementTests {
     }
 
     @Test
-    void test_ingest_measurement() {
+    void test_ingest_measurement() throws ValidationException {
         TemperatureData data = createTemperatureData();
         when(temperatureMeasurementPointRepository.existsById(LOCATION)).thenReturn(Boolean.TRUE);
         dataService.ingestData(data);
@@ -63,7 +64,7 @@ class DataServiceImplIngestMeasurementTests {
     }
 
     @Test
-    void test_ingest_multiple_measurement() {
+    void test_ingest_multiple_measurement() throws ValidationException {
         Metadata metadata = new Metadata(LOCATION);
         List<TemperatureMeasurement> temperatureMeasurements = new ArrayList<>();
         temperatureMeasurements.add(new TemperatureMeasurement(-60.0, 12, 960.0, SkyState.CLEAR, null));
@@ -91,7 +92,7 @@ class DataServiceImplIngestMeasurementTests {
     }
 
     @Test
-    void test_ingest_measurement_and_measurement_point_not_exists_yet() {
+    void test_ingest_measurement_and_measurement_point_not_exists_yet() throws ValidationException {
         TemperatureData data = createTemperatureData();
         dataService.ingestData(data);
         final ArgumentCaptor<List<Measurement>> listMeasurements
