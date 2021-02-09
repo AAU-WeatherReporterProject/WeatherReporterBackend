@@ -29,13 +29,14 @@ public class DataServiceImpl implements DataService {
         this.temperatureMeasurementPointRepository = temperatureMeasurementPointRepository;
     }
 
+
     @Override
     public void ingestData(TemperatureData data) {
         List<Measurement> measurementList = new ArrayList<>();
         addMeasurementPointIfNotExists(data.getMetadata().getKey());
         for (TemperatureMeasurement inputMeasurement : data.getMeasurements()) {
             if (inputMeasurement != null) {
-                measurementList.add(fillMeasurementFromTemperatureMeasurement(inputMeasurement, data.getMetadata().getKey()));
+                measurementList.add(convertToMeasurementObject(inputMeasurement, data.getMetadata().getKey()));
             }
         }
         measurementRepository.saveAll(measurementList);
@@ -53,7 +54,14 @@ public class DataServiceImpl implements DataService {
         }
     }
 
-    private Measurement fillMeasurementFromTemperatureMeasurement(TemperatureMeasurement temperatureMeasurement, String location) {
+    /**
+     * converts the given temperature measurement object to a measurement object.
+     *
+     * @param temperatureMeasurement given temperature object
+     * @param location               location of temperature measurement
+     * @return measurement object
+     */
+    private Measurement convertToMeasurementObject(TemperatureMeasurement temperatureMeasurement, String location) {
         Measurement measurement = new Measurement();
         measurement.setTemperatureMeasurementPoint(new TemperatureMeasurementPoint(location));
         measurement.setTemperature(temperatureMeasurement.getTemperature());
@@ -92,6 +100,7 @@ public class DataServiceImpl implements DataService {
         return temperatureMeasurements;
     }
 
+
     @Override
     public void addMeasurementPoint(MeasurementPoint measurementPoint) {
         if (measurementPoint == null || measurementPoint.getLocation() == null) {
@@ -105,6 +114,7 @@ public class DataServiceImpl implements DataService {
         point.setLocation(measurementPoint.getLocation());
         temperatureMeasurementPointRepository.saveAndFlush(point);
     }
+
 
     @Override
     public List<MeasurementPoint> getAllMeasurementPoints() {

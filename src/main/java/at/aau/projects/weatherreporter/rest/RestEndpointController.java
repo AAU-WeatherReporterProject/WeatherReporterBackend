@@ -30,7 +30,7 @@ public class RestEndpointController {
     }
 
     @PostMapping(value = "/ingest")
-    public void ingest(@RequestBody @Valid TemperatureData data) {
+    public void ingestData(@RequestBody @Valid TemperatureData data) {
         dataService.ingestData(data);
     }
 
@@ -41,13 +41,13 @@ public class RestEndpointController {
     }
 
     @GetMapping(value = "/measurementPoints")
-    public List<MeasurementPoint> getMeasurementPoints() {
+    public List<MeasurementPoint> getAllMeasurementPoints() {
         return dataService.getAllMeasurementPoints();
     }
 
     @GetMapping(value = "/dataPoints")
     @Validated
-    public List<TemperatureMeasurement> getDataPoints(
+    public List<TemperatureMeasurement> readMeasurements(
             @RequestParam(value = "from", required = false) @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm") String from,
             @RequestParam(value = "to", required = false) @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm") String to,
             @RequestParam(value = "key") String key) {
