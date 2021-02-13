@@ -14,7 +14,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
       use-new-id-generator-mappings: true
     properties:
       hibernate:
