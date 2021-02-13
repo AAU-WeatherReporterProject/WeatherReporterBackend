@@ -1,0 +1,23 @@
+server:
+  port: 8098
+  servlet:
+    context-path: /api
+
+spring:
+  datasource:
+    url: ${DB_URL}
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: create
+      use-new-id-generator-mappings: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+    open-in-view: false
+
+debug: false
