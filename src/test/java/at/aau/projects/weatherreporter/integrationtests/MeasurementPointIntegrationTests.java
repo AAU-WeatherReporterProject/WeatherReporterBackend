@@ -4,7 +4,6 @@ import at.aau.projects.weatherreporter.rest.entity.Measurement;
 import at.aau.projects.weatherreporter.rest.entity.TemperatureMeasurementPoint;
 import at.aau.projects.weatherreporter.rest.model.MeasurementPoint;
 import at.aau.projects.weatherreporter.rest.model.SkyState;
-import at.aau.projects.weatherreporter.rest.model.TemperatureMeasurement;
 import at.aau.projects.weatherreporter.rest.repository.MeasurementRepository;
 import at.aau.projects.weatherreporter.rest.repository.TemperatureMeasurementPointRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,14 +11,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -30,7 +25,6 @@ import java.util.List;
 import static org.springframework.test.util.AssertionErrors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -98,7 +92,7 @@ class MeasurementPointIntegrationTests {
                 .accept(MediaType.APPLICATION_JSON)
                 .content("{}"))
                 .andExpect(status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().string("400 No Measurement Point Location given"));
+                .andExpect(MockMvcResultMatchers.content().string("No Measurement Point Location given"));
 
         List<TemperatureMeasurementPoint> points = temperatureMeasurementPointRepository.findAll();
         assertNotNull("temperature points", points);
@@ -111,7 +105,7 @@ class MeasurementPointIntegrationTests {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(mapToJson(new MeasurementPoint(MEASUREMENT_POINT_1))))
                 .andExpect(status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().string("400 Measurement Point already exists"));
+                .andExpect(MockMvcResultMatchers.content().string("Measurement Point already exists"));
 
         List<TemperatureMeasurementPoint> points = temperatureMeasurementPointRepository.findAll();
         assertNotNull("temperature points", points);

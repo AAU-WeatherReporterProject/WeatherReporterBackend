@@ -1,6 +1,7 @@
 package at.aau.projects.weatherreporter.unittests;
 
 import at.aau.projects.weatherreporter.rest.entity.TemperatureMeasurementPoint;
+import at.aau.projects.weatherreporter.rest.exception.ValidationException;
 import at.aau.projects.weatherreporter.rest.model.MeasurementPoint;
 import at.aau.projects.weatherreporter.rest.repository.MeasurementRepository;
 import at.aau.projects.weatherreporter.rest.repository.TemperatureMeasurementPointRepository;
@@ -57,27 +58,27 @@ class DataServiceImplMeasurementPointTests {
 
     @Test
     void test_add_measurement_point_null() {
-        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> dataService.addMeasurementPoint(null));
-        assertEquals("expect http bad request status", HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        ValidationException exception = assertThrows(ValidationException.class, () -> dataService.addMeasurementPoint(null));
+        assertEquals("exception message", "No Measurement Point Location given", exception.getMessage());
     }
 
     @Test
     void test_add_measurement_point_location_null() {
         MeasurementPoint measurementPoint = new MeasurementPoint(null);
-        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> dataService.addMeasurementPoint(measurementPoint));
-        assertEquals("expect http bad request status", HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        ValidationException exception = assertThrows(ValidationException.class, () -> dataService.addMeasurementPoint(measurementPoint));
+        assertEquals("exception message", "No Measurement Point Location given", exception.getMessage());
     }
 
     @Test
     void test_add_measurement_point_already_exists() {
         MeasurementPoint measurementPoint = new MeasurementPoint(LOCATION);
         when(temperatureMeasurementPointRepository.existsById(LOCATION)).thenReturn(Boolean.TRUE);
-        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> dataService.addMeasurementPoint(measurementPoint));
-        assertEquals("expect http bad request status", HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        ValidationException exception = assertThrows(ValidationException.class, () -> dataService.addMeasurementPoint(measurementPoint));
+        assertEquals("exception message", "Measurement Point already exists", exception.getMessage());
     }
 
     @Test
-    void test_add_measurement_point_data() {
+    void test_add_measurement_point_data() throws ValidationException {
         MeasurementPoint measurementPoint = new MeasurementPoint(LOCATION);
         dataService.addMeasurementPoint(measurementPoint);
         final ArgumentCaptor<TemperatureMeasurementPoint> temperatureMeasurementPointArgumentCaptor

@@ -1,6 +1,7 @@
 package at.aau.projects.weatherreporter.rest.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
@@ -14,6 +15,7 @@ import java.util.Set;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "Temperature_Measurement_Point")
 public class TemperatureMeasurementPoint {
@@ -26,9 +28,6 @@ public class TemperatureMeasurementPoint {
             fetch = FetchType.LAZY
     )
     private Set<Measurement> measurements;
-
-    public TemperatureMeasurementPoint() {
-    }
 
     public TemperatureMeasurementPoint(String location) {
         this.location = location;

@@ -1,20 +1,16 @@
 package at.aau.projects.weatherreporter.unittests;
 
 import at.aau.projects.weatherreporter.rest.entity.Measurement;
-import at.aau.projects.weatherreporter.rest.entity.TemperatureMeasurementPoint;
-import at.aau.projects.weatherreporter.rest.model.Metadata;
+import at.aau.projects.weatherreporter.rest.exception.ValidationException;
 import at.aau.projects.weatherreporter.rest.model.SkyState;
-import at.aau.projects.weatherreporter.rest.model.TemperatureData;
 import at.aau.projects.weatherreporter.rest.model.TemperatureMeasurement;
 import at.aau.projects.weatherreporter.rest.repository.MeasurementRepository;
 import at.aau.projects.weatherreporter.rest.repository.TemperatureMeasurementPointRepository;
 import at.aau.projects.weatherreporter.rest.service.DataService;
 import at.aau.projects.weatherreporter.rest.service.DataServiceImpl;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
@@ -24,10 +20,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,17 +44,16 @@ class DataServiceImplReadMeasurementTests {
 
     @Test
     void test_read_measurements_key_null() {
-        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> dataService.readMeasurements(null, null, null));
-        assertEquals("http status", exception.getStatusCode(), HttpStatus.BAD_REQUEST);
-        assertEquals("exception text", "400 No Location given", exception.getMessage());
+        ValidationException exception = assertThrows(ValidationException.class, () -> dataService.readMeasurements(null, null, null));
+        assertEquals("exception text", "No Location given", exception.getMessage());
     }
 
     @Test
-    void test_read_measurements_to_null() {
+    void test_read_measurements_to_null() throws ValidationException {
         List<Measurement> measurementsKeyTo = new ArrayList<>();
         for (int i = 0; i < 4; i++)
             measurementsKeyTo.add(createMeasurement());
-        when(measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampBefore(anyString(), any(Timestamp.class)))
+        when(measurementRepository.findAllByTemperatureMeasurementPointLocationAndTimestampBefore(anyString(), any(Timestamp.class)))
                 .thenReturn(measurementsKeyTo);
 
         List<TemperatureMeasurement> temperatureMeasurements = dataService.readMeasurements(null, "2020-12-09 23:59:00", LOCATION);
@@ -66,11 +61,11 @@ class DataServiceImplReadMeasurementTests {
     }
 
     @Test
-    void test_read_measurements_from_null() {
+    void test_read_measurements_from_null() throws ValidationException {
         List<Measurement> measurementsKeyFrom = new ArrayList<>();
         for (int i = 0; i < 2; i++)
             measurementsKeyFrom.add(createMeasurement());
-        when(measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampAfter(anyString(), any(Timestamp.class)))
+        when(measurementRepository.findAllByTemperatureMeasurementPointLocationAndTimestampAfter(anyString(), any(Timestamp.class)))
                 .thenReturn(measurementsKeyFrom);
 
         List<TemperatureMeasurement> temperatureMeasurements = dataService.readMeasurements("2020-12-09 23:59:00", null, LOCATION);
@@ -78,11 +73,11 @@ class DataServiceImplReadMeasurementTests {
     }
 
     @Test
-    void test_read_measurements_with_to_from() {
+    void test_read_measurements_with_to_from() throws ValidationException {
         List<Measurement> measurementsKeyToFrom = new ArrayList<>();
         for (int i = 0; i < 1; i++)
             measurementsKeyToFrom.add(createMeasurement());
-        when(measurementRepository.findAllByTemperatureMeasurementPoint_LocationAndTimestampBetween(anyString(), any(Timestamp.class), any(Timestamp.class)))
+        when(measurementRepository.findAllByTemperatureMeasurementPointLocationAndTimestampBetween(anyString(), any(Timestamp.class), any(Timestamp.class)))
                 .thenReturn(measurementsKeyToFrom);
 
         List<TemperatureMeasurement> temperatureMeasurements = dataService.readMeasurements("2020-12-09 23:59:00", "2020-12-09 23:59:00", LOCATION);
@@ -90,11 +85,11 @@ class DataServiceImplReadMeasurementTests {
     }
 
     @Test
-    void test_read_measurements_only_key() {
+    void test_read_measurements_only_key() throws ValidationException {
         List<Measurement> measurementsOnlyKey = new ArrayList<>();
         for (int i = 0; i < 5; i++)
             measurementsOnlyKey.add(createMeasurement());
-        when(measurementRepository.findAllByTemperatureMeasurementPoint_Location(LOCATION)).thenReturn(measurementsOnlyKey);
+        when(measurementRepository.findAllByTemperatureMeasurementPointLocation(LOCATION)).thenReturn(measurementsOnlyKey);
 
         List<TemperatureMeasurement> temperatureMeasurements = dataService.readMeasurements(null, null, LOCATION);
         assertEquals("number of entries", 5, temperatureMeasurements.size());
