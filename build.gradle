@@ -8,6 +8,7 @@ plugins {
     id "com.palantir.docker-run" version "0.22.1"
 
     id "org.sonarqube" version "3.0"
+    id "jacoco"
 }
 
 group = 'at.aau.projects'
@@ -72,5 +73,10 @@ sonarqube {
         property "sonar.projectKey", "AAU-WeatherReporterProject_WeatherReporterBackend"
         property "sonar.organization", "aau-weatherreporterproject"
         property "sonar.host.url", "https://sonarcloud.io"
+    }
+}
+jacocoTestReport {
+    reports {
+        xml.enabled true
     }
 }
