@@ -102,16 +102,14 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public void addMeasurementPoint(MeasurementPoint measurementPoint) throws ValidationException {
-        if (measurementPoint == null || measurementPoint.getLocation() == null) {
-            throw new ValidationException("No Measurement Point Location given");
+        if (measurementPoint != null && measurementPoint.getLocation() != null) {
+            if (temperatureMeasurementPointRepository.existsById(measurementPoint.getLocation())) {
+                throw new ValidationException("Measurement Point already exists");
+            }
+            TemperatureMeasurementPoint point = new TemperatureMeasurementPoint();
+            point.setLocation(measurementPoint.getLocation());
+            temperatureMeasurementPointRepository.saveAndFlush(point);
         }
-
-        if (temperatureMeasurementPointRepository.existsById(measurementPoint.getLocation())) {
-            throw new ValidationException("Measurement Point already exists");
-        }
-        TemperatureMeasurementPoint point = new TemperatureMeasurementPoint();
-        point.setLocation(measurementPoint.getLocation());
-        temperatureMeasurementPointRepository.saveAndFlush(point);
     }
 
 

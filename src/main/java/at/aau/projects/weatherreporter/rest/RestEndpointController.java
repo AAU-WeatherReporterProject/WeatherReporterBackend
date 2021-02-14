@@ -38,7 +38,7 @@ public class RestEndpointController {
     }
 
     @PostMapping(value = "/measurementPoint")
-    public ResponseEntity<String> addMeasurementPoint(@RequestBody @Nonnull MeasurementPoint measurementPoint) throws ValidationException {
+    public ResponseEntity<String> addMeasurementPoint(@RequestBody @Nonnull @Valid MeasurementPoint measurementPoint) throws ValidationException {
         dataService.addMeasurementPoint(measurementPoint);
         return ResponseEntity.ok("Measurement Point was successfully created!");
     }

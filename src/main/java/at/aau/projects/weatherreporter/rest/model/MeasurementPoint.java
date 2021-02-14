@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.ToString;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @Getter
 @ToString
@@ -14,6 +16,8 @@ import javax.annotation.Nullable;
 public class MeasurementPoint {
 
     @Nullable
+    @Size(max = 180, message = "location must be smaller or equal than {max} character")
+    @NotEmpty(message = "no location given")
     private final String location;
 
     public MeasurementPoint() {
