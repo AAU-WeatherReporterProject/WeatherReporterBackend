@@ -57,16 +57,16 @@ class DataServiceImplMeasurementPointTests {
     }
 
     @Test
-    void test_add_measurement_point_null() {
-        ValidationException exception = assertThrows(ValidationException.class, () -> dataService.addMeasurementPoint(null));
-        assertEquals("exception message", "No Measurement Point Location given", exception.getMessage());
+    void test_add_measurement_point_null() throws ValidationException {
+        dataService.addMeasurementPoint(null);
+        verify(temperatureMeasurementPointRepository,times(0)).saveAndFlush(any());
     }
 
     @Test
-    void test_add_measurement_point_location_null() {
+    void test_add_measurement_point_location_null() throws ValidationException {
         MeasurementPoint measurementPoint = new MeasurementPoint(null);
-        ValidationException exception = assertThrows(ValidationException.class, () -> dataService.addMeasurementPoint(measurementPoint));
-        assertEquals("exception message", "No Measurement Point Location given", exception.getMessage());
+        dataService.addMeasurementPoint(measurementPoint);
+        verify(temperatureMeasurementPointRepository,times(0)).saveAndFlush(any());
     }
 
     @Test

@@ -4,6 +4,7 @@ import at.aau.projects.weatherreporter.rest.entity.Measurement;
 import at.aau.projects.weatherreporter.rest.entity.TemperatureMeasurementPoint;
 import at.aau.projects.weatherreporter.rest.model.MeasurementPoint;
 import at.aau.projects.weatherreporter.rest.model.SkyState;
+import at.aau.projects.weatherreporter.rest.model.TemperatureData;
 import at.aau.projects.weatherreporter.rest.repository.MeasurementRepository;
 import at.aau.projects.weatherreporter.rest.repository.TemperatureMeasurementPointRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -22,9 +23,11 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.util.AssertionErrors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -41,6 +44,10 @@ class MeasurementPointIntegrationTests {
 
     private final String MEASUREMENT_POINT_1 = "TestLocation";
     private final String MEASUREMENT_POINT_2 = "12345678";
+    private final String MEASUREMENT_POINT_TOO_LONG = "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789" +
+            "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789";
+    private final String MEASUREMENT_POINT_LENGTH_180 = "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789" +
+            "01234567890123456789012345678901234567890123456789012345678901234567890123456789";
 
     @BeforeEach
     public void setUp() {
@@ -75,6 +82,20 @@ class MeasurementPointIntegrationTests {
         assertTrue("contains temperature point 'test2323' ", points.stream().anyMatch(point -> "test2323".equals(point.getLocation())));
     }
 
+
+    @Test
+    void addMeasurementPoints_locationLength_180() throws Exception {
+        this.mvc.perform(post("/v1/measurementPoint").contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(mapToJson(new MeasurementPoint(MEASUREMENT_POINT_LENGTH_180))))
+                .andExpect(status().isOk());
+
+        List<TemperatureMeasurementPoint> points = temperatureMeasurementPointRepository.findAll();
+        assertNotNull("temperature points", points);
+        assertEquals("number of temperature points", 3, points.size());
+        assertTrue("contains temperature point ", points.stream().anyMatch(point -> MEASUREMENT_POINT_LENGTH_180.equals(point.getLocation())));
+    }
+
     @Test
     void addMeasurementPoints_no_content() throws Exception {
         this.mvc.perform(post("/v1/measurementPoint").contentType(MediaType.APPLICATION_JSON)
@@ -92,11 +113,39 @@ class MeasurementPointIntegrationTests {
                 .accept(MediaType.APPLICATION_JSON)
                 .content("{}"))
                 .andExpect(status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().string("No Measurement Point Location given"));
+                .andExpect(jsonPath("$.errors", hasItem("no location given")));
 
         List<TemperatureMeasurementPoint> points = temperatureMeasurementPointRepository.findAll();
         assertNotNull("temperature points", points);
         assertEquals("number of temperature points", 2, points.size());
+    }
+
+    @Test
+    void addMeasurementPoints_location_null() throws Exception {
+        this.mvc.perform(post("/v1/measurementPoint").contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(mapToJson(new MeasurementPoint(null))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors", hasItem("no location given")));
+    }
+
+
+    @Test
+    void addMeasurementPoints_location_empty() throws Exception {
+        this.mvc.perform(post("/v1/measurementPoint").contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(mapToJson(new MeasurementPoint(""))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors", hasItem("no location given")));
+    }
+
+    @Test
+    void addMeasurementPoints_location_too_long() throws Exception {
+        this.mvc.perform(post("/v1/measurementPoint").contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(mapToJson(new MeasurementPoint(MEASUREMENT_POINT_TOO_LONG))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors", hasItem("location must be smaller or equal than 180 character")));
     }
 
     @Test
