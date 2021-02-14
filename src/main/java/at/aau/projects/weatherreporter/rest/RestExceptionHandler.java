@@ -24,9 +24,9 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    private final String timeStamp = "timeStamp";
-    private final String httpStatus = "status";
-    private final String error = "error";
+    private static final String timeStamp = "timeStamp";
+    private static final String httpStatus = "status";
+    private static final String error = "error";
 
     @ExceptionHandler(ValidationException.class)
     protected ResponseEntity<Object> handleValidationException(ValidationException ex) {
