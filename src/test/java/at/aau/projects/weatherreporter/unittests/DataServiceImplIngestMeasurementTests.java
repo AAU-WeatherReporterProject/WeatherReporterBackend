@@ -121,14 +121,6 @@ class DataServiceImplIngestMeasurementTests {
         return new TemperatureData(metadata, measurements);
     }
 
-    private TemperatureData createTemperatureData(Double temperature, Integer humidity, Double pressure) {
-        Metadata metadata = new Metadata(LOCATION);
-        List<TemperatureMeasurement> measurements = new ArrayList<>();
-        TemperatureMeasurement measurement = new TemperatureMeasurement(temperature, humidity, pressure, SkyState.CLEAR, null);
-        measurements.add(measurement);
-        return new TemperatureData(metadata, measurements);
-    }
-
     private TemperatureMeasurementPoint createTemperaturePoint() {
         return new TemperatureMeasurementPoint(LOCATION);
     }
