@@ -24,9 +24,9 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    private static final String timeStamp = "timeStamp";
-    private static final String httpStatus = "status";
-    private static final String error = "error";
+    private static final String TIME_STAMP = "timeStamp";
+    private static final String HTTP_STATUS = "status";
+    private static final String ERROR = "error";
 
     @ExceptionHandler(ValidationException.class)
     protected ResponseEntity<Object> handleValidationException(ValidationException ex) {
@@ -39,8 +39,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   HttpHeaders headers,
                                                                   HttpStatus status, WebRequest request) {
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put(timeStamp, new Date());
-        body.put(httpStatus, status.value());
+        body.put(TIME_STAMP, new Date());
+        body.put(HTTP_STATUS, status.value());
         //Get all errors
         List<String> errors = ex.getBindingResult()
                 .getFieldErrors()
@@ -55,9 +55,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put(timeStamp, new Date());
-        body.put(httpStatus, status.value());
-        body.put(error, ex.getMessage());
+        body.put(TIME_STAMP, new Date());
+        body.put(HTTP_STATUS, status.value());
+        body.put(ERROR, ex.getMessage());
 
         return new ResponseEntity<>(body, headers, status);
     }
@@ -65,9 +65,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     protected ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex) {
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put(timeStamp, new Date());
-        body.put(httpStatus, HttpStatus.BAD_REQUEST);
-        body.put(error, ex.getMessage());
+        body.put(TIME_STAMP, new Date());
+        body.put(HTTP_STATUS, HttpStatus.BAD_REQUEST);
+        body.put(ERROR, ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
