@@ -2,7 +2,10 @@ package at.aau.projects.weatherreporter.integrationtests;
 
 import at.aau.projects.weatherreporter.rest.entity.Measurement;
 import at.aau.projects.weatherreporter.rest.entity.TemperatureMeasurementPoint;
-import at.aau.projects.weatherreporter.rest.model.*;
+import at.aau.projects.weatherreporter.rest.model.Metadata;
+import at.aau.projects.weatherreporter.rest.model.SkyState;
+import at.aau.projects.weatherreporter.rest.model.TemperatureData;
+import at.aau.projects.weatherreporter.rest.model.TemperatureMeasurement;
 import at.aau.projects.weatherreporter.rest.repository.MeasurementRepository;
 import at.aau.projects.weatherreporter.rest.repository.TemperatureMeasurementPointRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -15,7 +18,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.ArrayList;
