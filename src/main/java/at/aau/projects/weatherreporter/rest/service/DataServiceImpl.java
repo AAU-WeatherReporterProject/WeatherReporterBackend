@@ -32,13 +32,15 @@ public class DataServiceImpl implements DataService {
     @Override
     public void ingestData(TemperatureData data) throws ValidationException {
         List<Measurement> measurementList = new ArrayList<>();
-        addMeasurementPointIfNotExists(data.getMetadata().getKey());
-        for (TemperatureMeasurement inputMeasurement : data.getMeasurements()) {
-            if (inputMeasurement != null) {
-                measurementList.add(convertToMeasurementObject(inputMeasurement, data.getMetadata().getKey()));
+        if (data != null && data.getMetadata() != null && data.getMeasurements() != null) {
+            addMeasurementPointIfNotExists(data.getMetadata().getKey());
+            for (TemperatureMeasurement inputMeasurement : data.getMeasurements()) {
+                if (inputMeasurement != null) {
+                    measurementList.add(convertToMeasurementObject(inputMeasurement, data.getMetadata().getKey()));
+                }
             }
+            measurementRepository.saveAll(measurementList);
         }
-        measurementRepository.saveAll(measurementList);
     }
 
     /**

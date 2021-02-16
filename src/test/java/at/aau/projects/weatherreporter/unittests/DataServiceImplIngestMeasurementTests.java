@@ -59,6 +59,31 @@ class DataServiceImplIngestMeasurementTests {
         Assertions.assertEquals(measurements.get(0).getTemperatureMeasurementPoint().getLocation(), createTemperaturePoint().getLocation());
     }
 
+
+    @Test
+    void test_ingest_measurement_data_null() throws ValidationException {
+        dataService.ingestData(null);
+        verify(measurementRepository, times(0)).saveAll(any());
+    }
+
+    @Test
+    void test_ingest_measurement_data_metaData_null() throws ValidationException {
+        List<TemperatureMeasurement> measurements = new ArrayList<>();
+        TemperatureMeasurement measurement = new TemperatureMeasurement(12.0, 12, 960.0, SkyState.CLEAR, null);
+        measurements.add(measurement);
+        TemperatureData data =  new TemperatureData(null, measurements);
+        dataService.ingestData(data);
+        verify(measurementRepository, times(0)).saveAll(any());
+    }
+
+    @Test
+    void test_ingest_measurement_measurements_null() throws ValidationException {
+        Metadata metadata = new Metadata(LOCATION);
+        TemperatureData data =  new TemperatureData(metadata, null);
+        dataService.ingestData(data);
+        verify(measurementRepository, times(0)).saveAll(any());
+    }
+
     @Test
     void test_ingest_multiple_measurement() throws ValidationException {
         Metadata metadata = new Metadata(LOCATION);
