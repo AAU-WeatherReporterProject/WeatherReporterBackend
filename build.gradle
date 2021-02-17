@@ -73,7 +73,7 @@ sonarqube {
         property "sonar.projectKey", "AAU-WeatherReporterProject_WeatherReporterBackend"
         property "sonar.organization", "aau-weatherreporterproject"
         property "sonar.host.url", "https://sonarcloud.io"
-        property "sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+        property "sonar.coverage.jacoco.xmlReportPaths", "${project.rootDir}/build/reports/jacoco/test/jacocoTestReport.xml"
     }
 }
 jacocoTestReport {
